@@ -1,472 +1,188 @@
-Object.assign(pc, (function () {
-    'use strict';
+vec2_constructor  = instance.exports["Vec2#constructor"];
 
-    /**
-     * @constructor
-     * @name pc.Vec2
-     * @classdesc A 2-dimensional vector.
-     * @description Creates a new Vec2 object.
-     * @param {Number} [x] The x value. If x is an array of length 2, the array will be used to populate all components.
-     * @param {Number} [y] The y value.
-     * @example
-     * var v = new pc.Vec2(1, 2);
-     */
-    var Vec2 = function (x, y) {
-        if (x && x.length === 2) {
-            this.x = x[0];
-            this.y = x[1];
-        } else {
-            this.x = x || 0;
-            this.y = y || 0;
-        }
-    };
+vec2_add          = instance.exports["Vec2#add"];
+vec2_add2         = instance.exports["Vec2#add2"];
+vec2_clone        = instance.exports["Vec2#clone"];
+vec2_copy         = instance.exports["Vec2#copy"];
+vec2_dot          = instance.exports["Vec2#dot"];
+vec2_equals       = instance.exports["Vec2#equals"];
+vec2_length       = instance.exports["Vec2#length"];
+vec2_lengthSq     = instance.exports["Vec2#lengthSq"];
+vec2_lerp         = instance.exports["Vec2#lerp"];
+vec2_mul          = instance.exports["Vec2#mul"];
+vec2_mul2         = instance.exports["Vec2#mul2"];
+vec2_normalize    = instance.exports["Vec2#normalize"];
+vec2_scale        = instance.exports["Vec2#scale"];
+vec2_set          = instance.exports["Vec2#set"];
+vec2_sub          = instance.exports["Vec2#sub"];
+vec2_sub2         = instance.exports["Vec2#sub2"];
 
-    Object.assign(Vec2.prototype, {
-        /**
-         * @function
-         * @name pc.Vec2#add
-         * @description Adds a 2-dimensional vector to another in place.
-         * @param {pc.Vec2} rhs The vector to add to the specified vector.
-         * @returns {pc.Vec2} Self for chaining.
-         * @example
-         * var a = new pc.Vec2(10, 10);
-         * var b = new pc.Vec2(20, 20);
-         *
-         * a.add(b);
-         *
-         * // Should output [30, 30]
-         * console.log("The result of the addition is: " + a.toString());
-         */
-        add: function (rhs) {
-            this.x += rhs.x;
-            this.y += rhs.y;
+pc.Vec2 = function(x, y) {
+	if (x && x.length === 2) {
+		this.ptr = vec2_constructor(0, x[0], x[1]);
+	} else {
+		this.ptr = vec2_constructor(0, x || 0, y || 0);
+	}
+}
 
-            return this;
-        },
+pc.Vec2.wrap = function(ptr) {
+	var tmp = Object.create(pc.Vec2.prototype);
+	tmp.ptr = ptr;
+	return tmp;
+}
 
-        /**
-         * @function
-         * @name pc.Vec2#add2
-         * @description Adds two 2-dimensional vectors together and returns the result.
-         * @param {pc.Vec2} lhs The first vector operand for the addition.
-         * @param {pc.Vec2} rhs The second vector operand for the addition.
-         * @returns {pc.Vec2} Self for chaining.
-         * @example
-         * var a = new pc.Vec2(10, 10);
-         * var b = new pc.Vec2(20, 20);
-         * var r = new pc.Vec2();
-         *
-         * r.add2(a, b);
-         * // Should output [30, 30]
-         *
-         * console.log("The result of the addition is: " + r.toString());
-         */
-        add2: function (lhs, rhs) {
-            this.x = lhs.x + rhs.x;
-            this.y = lhs.y + rhs.y;
+pc.Vec2.prototype.add = function(rhs) {
+	vec2_add(this.ptr, rhs.ptr);
+	return this;
+}
 
-            return this;
-        },
+pc.Vec2.prototype.add2 = function(lhs, rhs) {
+	vec2_add2(this.ptr, lhs.ptr, rhs.ptr);
+	return this;
+}
 
-        /**
-         * @function
-         * @name pc.Vec2#clone
-         * @description Returns an identical copy of the specified 2-dimensional vector.
-         * @returns {pc.Vec2} A 2-dimensional vector containing the result of the cloning.
-         * @example
-         * var v = new pc.Vec2(10, 20);
-         * var vclone = v.clone();
-         * console.log("The result of the cloning is: " + vclone.toString());
-         */
-        clone: function () {
-            return new Vec2().copy(this);
-        },
+pc.Vec2.prototype.clone = function() {
+	var tmp = vec2_clone(this.ptr);
+	return pc.Vec2.wrap(tmp);
+}
 
-        /**
-         * @function
-         * @name pc.Vec2#copy
-         * @description Copied the contents of a source 2-dimensional vector to a destination 2-dimensional vector.
-         * @param {pc.Vec2} rhs A vector to copy to the specified vector.
-         * @returns {pc.Vec2} Self for chaining.
-         * @example
-         * var src = new pc.Vec2(10, 20);
-         * var dst = new pc.Vec2();
-         *
-         * dst.copy(src);
-         *
-         * console.log("The two vectors are " + (dst.equals(src) ? "equal" : "different"));
-         */
-        copy: function (rhs) {
-            this.x = rhs.x;
-            this.y = rhs.y;
+pc.Vec2.prototype.copy = function(rhs) {
+	vec2_copy(this.ptr, rhs.ptr);
+	return this;
+}
 
-            return this;
-        },
+pc.Vec2.prototype.dot = function(rhs) {
+	return vec2_dot(this.ptr, rhs.ptr);
+}
 
-        /**
-         * @function
-         * @name pc.Vec2#dot
-         * @description Returns the result of a dot product operation performed on the two specified 2-dimensional vectors.
-         * @param {pc.Vec2} rhs The second 2-dimensional vector operand of the dot product.
-         * @returns {Number} The result of the dot product operation.
-         * @example
-         * var v1 = new pc.Vec2(5, 10);
-         * var v2 = new pc.Vec2(10, 20);
-         * var v1dotv2 = v1.dot(v2);
-         * console.log("The result of the dot product is: " + v1dotv2);
-         */
-        dot: function (rhs) {
-            return this.x * rhs.x + this.y * rhs.y;
-        },
+pc.Vec2.prototype.equals = function(rhs) {
+	return !!vec2_equals(this.ptr, rhs.ptr);
+}
 
-        /**
-         * @function
-         * @name pc.Vec2#equals
-         * @description Reports whether two vectors are equal.
-         * @param {pc.Vec2} rhs The vector to compare to the specified vector.
-         * @returns {Boolean} true if the vectors are equal and false otherwise.
-         * @example
-         * var a = new pc.Vec2(1, 2);
-         * var b = new pc.Vec2(4, 5);
-         * console.log("The two vectors are " + (a.equals(b) ? "equal" : "different"));
-         */
-        equals: function (rhs) {
-            return this.x === rhs.x && this.y === rhs.y;
-        },
+pc.Vec2.prototype.length = function() {
+	return vec2_length(this.ptr);
+}
 
-        /**
-         * @function
-         * @name pc.Vec2#length
-         * @description Returns the magnitude of the specified 2-dimensional vector.
-         * @returns {Number} The magnitude of the specified 2-dimensional vector.
-         * @example
-         * var vec = new pc.Vec2(3, 4);
-         * var len = vec.length();
-         * // Should output 5
-         * console.log("The length of the vector is: " + len);
-         */
-        length: function () {
-            return Math.sqrt(this.x * this.x + this.y * this.y);
-        },
+pc.Vec2.prototype.lengthSq = function() {
+	return vec2_lengthSq(this.ptr);
+}
 
-        /**
-         * @function
-         * @name pc.Vec2#lengthSq
-         * @description Returns the magnitude squared of the specified 2-dimensional vector.
-         * @returns {Number} The magnitude of the specified 2-dimensional vector.
-         * @example
-         * var vec = new pc.Vec2(3, 4);
-         * var len = vec.lengthSq();
-         * // Should output 25
-         * console.log("The length squared of the vector is: " + len);
-         */
-        lengthSq: function () {
-            return this.x * this.x + this.y * this.y;
-        },
+pc.Vec2.prototype.lerp = function(lhs, rhs, alpha) {
+	vec2_lerp(this.ptr, lhs.ptr, rhs.ptr, alpha);
+	return this;
+}
 
-        /**
-         * @function
-         * @name pc.Vec2#lerp
-         * @description Returns the result of a linear interpolation between two specified 2-dimensional vectors.
-         * @param {pc.Vec2} lhs The 2-dimensional to interpolate from.
-         * @param {pc.Vec2} rhs The 2-dimensional to interpolate to.
-         * @param {Number} alpha The value controlling the point of interpolation. Between 0 and 1, the linear interpolant
-         * will occur on a straight line between lhs and rhs. Outside of this range, the linear interpolant will occur on
-         * a ray extrapolated from this line.
-         * @returns {pc.Vec2} Self for chaining.
-         * @example
-         * var a = new pc.Vec2(0, 0);
-         * var b = new pc.Vec2(10, 10);
-         * var r = new pc.Vec2();
-         *
-         * r.lerp(a, b, 0);   // r is equal to a
-         * r.lerp(a, b, 0.5); // r is 5, 5
-         * r.lerp(a, b, 1);   // r is equal to b
-         */
-        lerp: function (lhs, rhs, alpha) {
-            this.x = lhs.x + alpha * (rhs.x - lhs.x);
-            this.y = lhs.y + alpha * (rhs.y - lhs.y);
+pc.Vec2.prototype.mul = function(rhs) {
+	vec2_mul(this.ptr, rhs.ptr);
+	return this;
+}
 
-            return this;
-        },
+pc.Vec2.prototype.mul2 = function(lhs, rhs) {
+	vec2_mul2(this.ptr, lhs.ptr, rhs.ptr);
+	return this;
+}
 
-        /**
-         * @function
-         * @name pc.Vec2#mul
-         * @description Multiplies a 2-dimensional vector to another in place.
-         * @param {pc.Vec2} rhs The 2-dimensional vector used as the second multiplicand of the operation.
-         * @returns {pc.Vec2} Self for chaining.
-         * @example
-         * var a = new pc.Vec2(2, 3);
-         * var b = new pc.Vec2(4, 5);
-         *
-         * a.mul(b);
-         *
-         * // Should output 8, 15
-         * console.log("The result of the multiplication is: " + a.toString());
-         */
-        mul: function (rhs) {
-            this.x *= rhs.x;
-            this.y *= rhs.y;
+pc.Vec2.prototype.normalize = function() {
+	vec2_normalize(this.ptr);
+	return this;
+}
 
-            return this;
-        },
+pc.Vec2.prototype.scale = function(scalar) {
+	vec2_scale(this.ptr, scalar);
+	return this;
+}
 
-        /**
-         * @function
-         * @name pc.Vec2#mul2
-         * @description Returns the result of multiplying the specified 2-dimensional vectors together.
-         * @param {pc.Vec2} lhs The 2-dimensional vector used as the first multiplicand of the operation.
-         * @param {pc.Vec2} rhs The 2-dimensional vector used as the second multiplicand of the operation.
-         * @returns {pc.Vec2} Self for chaining.
-         * @example
-         * var a = new pc.Vec2(2, 3);
-         * var b = new pc.Vec2(4, 5);
-         * var r = new pc.Vec2();
-         *
-         * r.mul2(a, b);
-         *
-         * // Should output 8, 15
-         * console.log("The result of the multiplication is: " + r.toString());
-         */
-        mul2: function (lhs, rhs) {
-            this.x = lhs.x * rhs.x;
-            this.y = lhs.y * rhs.y;
+pc.Vec2.prototype.set = function(x, y) {
+	vec2_set(this.ptr, x, y);
+	return this;
+}
 
-            return this;
-        },
+pc.Vec2.prototype.sub = function(rhs) {
+	vec2_sub(this.ptr, rhs.ptr);
+	return this;
+}
 
-        /**
-         * @function
-         * @name pc.Vec2#normalize
-         * @description Returns the specified 2-dimensional vector copied and converted to a unit vector.
-         * If the vector has a length of zero, the vector's elements will be set to zero.
-         * @returns {pc.Vec2} Self for chaining.
-         * @example
-         * var v = new pc.Vec2(25, 0);
-         *
-         * v.normalize();
-         *
-         * // Should output 1, 0
-         * console.log("The result of the vector normalization is: " + v.toString());
-         */
-        normalize: function () {
-            var lengthSq = this.x * this.x + this.y * this.y;
-            if (lengthSq > 0) {
-                var invLength = 1 / Math.sqrt(lengthSq);
-                this.x *= invLength;
-                this.y *= invLength;
-            }
+pc.Vec2.prototype.sub2 = function(lhs, rhs) {
+	vec2_sub2(this.ptr, lhs.ptr, rhs.ptr);
+	return this;
+}
 
-            return this;
-        },
+pc.Vec2.prototype.toString = function() {
+	return '[' + this.x + ', ' + this.y + ']';
+}
 
-        /**
-         * @function
-         * @name pc.Vec2#scale
-         * @description Scales each component of the specified 2-dimensional vector by the supplied
-         * scalar value.
-         * @param {Number} scalar The value by which each vector component is multiplied.
-         * @returns {pc.Vec2} Self for chaining.
-         * @example
-         * var v = new pc.Vec2(2, 4);
-         *
-         * // Multiply by 2
-         * v.scale(2);
-         *
-         * // Negate
-         * v.scale(-1);
-         *
-         * // Divide by 2
-         * v.scale(0.5);
-         */
-        scale: function (scalar) {
-            this.x *= scalar;
-            this.y *= scalar;
+pc.Vec2.prototype.toStringFixed = function(n) {
+	return '[' + this.x.toFixed(n) + ', ' + this.y.toFixed(n) + ']';
+}
 
-            return this;
-        },
+Object.defineProperty(pc.Vec2.prototype, 'x', {
+	get: function() {
+		return module.F32[this.ptr >> 2]; // the shifting is same as dividing by 4, used to quickly lookup the value in module.F32
+	},
+	set: function(newValue) {
+		module.F32[this.ptr >> 2] = newValue;
+	}
+});
 
-        /**
-         * @function
-         * @name pc.Vec2#set
-         * @description Sets the specified 2-dimensional vector to the supplied numerical values.
-         * @param {Number} x The value to set on the first component of the vector.
-         * @param {Number} y The value to set on the second component of the vector.
-         * @returns {pc.Vec2} Self for chaining.
-         * @example
-         * var v = new pc.Vec2();
-         * v.set(5, 10);
-         *
-         * // Should output 5, 10
-         * console.log("The result of the vector set is: " + v.toString());
-         */
-        set: function (x, y) {
-            this.x = x;
-            this.y = y;
+Object.defineProperty(pc.Vec2.prototype, 'y', {
+	get: function() {
+		return module.F32[(this.ptr >> 2) + 1];
+	},
+	set: function(newValue) {
+		module.F32[(this.ptr >> 2) + 1] = newValue;
+	}
+});
 
-            return this;
-        },
+Object.defineProperty(pc.Vec2, 'ONE', {
+	get: (function () {
+		var tmp = new pc.Vec2(1, 1);
+		return function () {
+			return tmp;
+		};
+	}())
+});
 
-        /**
-         * @function
-         * @name pc.Vec2#sub
-         * @description Subtracts a 2-dimensional vector from another in place.
-         * @param {pc.Vec2} rhs The vector to add to the specified vector.
-         * @returns {pc.Vec2} Self for chaining.
-         * @example
-         * var a = new pc.Vec2(10, 10);
-         * var b = new pc.Vec2(20, 20);
-         *
-         * a.sub(b);
-         *
-         * // Should output [-10, -10]
-         * console.log("The result of the addition is: " + a.toString());
-         */
-        sub: function (rhs) {
-            this.x -= rhs.x;
-            this.y -= rhs.y;
+Object.defineProperty(pc.Vec2, 'LEFT', {
+	get: (function () {
+		var tmp = new pc.Vec2(-1, 0);
+		return function () {
+			return tmp;
+		};
+	}())
+});
 
-            return this;
-        },
+Object.defineProperty(pc.Vec2, 'RIGHT', {
+	get: (function () {
+		var tmp = new pc.Vec2(1, 0);
+		return function () {
+			return tmp;
+		};
+	}())
+});
 
-        /**
-         * @function
-         * @name pc.Vec2#sub2
-         * @description Subtracts two 2-dimensional vectors from one another and returns the result.
-         * @param {pc.Vec2} lhs The first vector operand for the addition.
-         * @param {pc.Vec2} rhs The second vector operand for the addition.
-         * @returns {pc.Vec2} Self for chaining.
-         * @example
-         * var a = new pc.Vec2(10, 10);
-         * var b = new pc.Vec2(20, 20);
-         * var r = new pc.Vec2();
-         *
-         * r.sub2(a, b);
-         *
-         * // Should output [-10, -10]
-         * console.log("The result of the addition is: " + r.toString());
-         */
-        sub2: function (lhs, rhs) {
-            this.x = lhs.x - rhs.x;
-            this.y = lhs.y - rhs.y;
+Object.defineProperty(pc.Vec2, 'UP', {
+	get: (function () {
+		var tmp = new pc.Vec2(0, 1);
+		return function () {
+			return tmp;
+		};
+	}())
+});
 
-            return this;
-        },
+Object.defineProperty(pc.Vec2, 'DOWN', {
+	get: (function () {
+		var tmp = new pc.Vec2(0, -1);
+		return function () {
+			return tmp;
+		};
+	}())
+});
 
-        /**
-         * @function
-         * @name pc.Vec2#toString
-         * @description Converts the vector to string form.
-         * @returns {String} The vector in string form.
-         * @example
-         * var v = new pc.Vec2(20, 10);
-         * // Should output '[20, 10]'
-         * console.log(v.toString());
-         */
-        toString: function () {
-            return '[' + this.x + ', ' + this.y + ']';
-        }
-    });
-
-    /**
-     * @field
-     * @type Number
-     * @name pc.Vec2#x
-     * @description The first element of the vector.
-     * @example
-     * var vec = new pc.Vec2(10, 20);
-     *
-     * // Get x
-     * var x = vec.x;
-     *
-     * // Set x
-     * vec.x = 0;
-     */
-    /**
-     * @field
-     * @type Number
-     * @name pc.Vec2#y
-     * @description The second element of the vector.
-     * @example
-     * var vec = new pc.Vec2(10, 20);
-     *
-     * // Get y
-     * var y = vec.y;
-     *
-     * // Set y
-     * vec.y = 0;
-     */
-
-    /**
-     * @field
-     * @static
-     * @readonly
-     * @type pc.Vec2
-     * @name pc.Vec2.ONE
-     * @description A constant vector set to [1, 1].
-     */
-    Object.defineProperty(Vec2, 'ONE', {
-        get: (function () {
-            var one = new Vec2(1, 1);
-            return function () {
-                return one;
-            };
-        }())
-    });
-
-    /**
-     * @field
-     * @static
-     * @readonly
-     * @type pc.Vec2
-     * @name pc.Vec2.RIGHT
-     * @description A constant vector set to [1, 0].
-     */
-    Object.defineProperty(Vec2, 'RIGHT', {
-        get: (function () {
-            var right = new Vec2(1, 0);
-            return function () {
-                return right;
-            };
-        }())
-    });
-
-    /**
-     * @field
-     * @static
-     * @readonly
-     * @type pc.Vec2
-     * @name pc.Vec2.UP
-     * @description A constant vector set to [0, 1].
-     */
-    Object.defineProperty(Vec2, 'UP', {
-        get: (function () {
-            var down = new Vec2(0, 1);
-            return function () {
-                return down;
-            };
-        }())
-    });
-
-    /**
-     * @field
-     * @static
-     * @readonly
-     * @type pc.Vec2
-     * @name pc.Vec2.ZERO
-     * @description A constant vector set to [0, 0].
-     */
-    Object.defineProperty(Vec2, 'ZERO', {
-        get: (function () {
-            var zero = new Vec2(0, 0);
-            return function () {
-                return zero;
-            };
-        }())
-    });
-
-    return {
-        Vec2: Vec2
-    };
-}()));
+Object.defineProperty(pc.Vec2, 'ZERO', {
+	get: (function () {
+		var tmp = new pc.Vec2(0, 0);
+		return function () {
+			return tmp;
+		};
+	}())
+});

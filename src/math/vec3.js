@@ -1,617 +1,292 @@
-Object.assign(pc, (function () {
-    'use strict';
+vec3_add          = instance.exports["Vec3#add"];
+vec3_add2         = instance.exports["Vec3#add2"];
+vec3_clone        = instance.exports["Vec3#clone"];
+vec3_constructor  = instance.exports["Vec3#constructor"];
+vec3_copy         = instance.exports["Vec3#copy"];
+vec3_cross        = instance.exports["Vec3#cross"];
+vec3_dot          = instance.exports["Vec3#dot"];
+vec3_equals       = instance.exports["Vec3#equals"];
+vec3_length       = instance.exports["Vec3#length"];
+vec3_lengthSq     = instance.exports["Vec3#lengthSq"];
+vec3_lerp         = instance.exports["Vec3#lerp"];
+vec3_mul          = instance.exports["Vec3#mul"];
+vec3_mul2         = instance.exports["Vec3#mul2"];
+vec3_normalize    = instance.exports["Vec3#normalize"];
+vec3_project      = instance.exports["Vec3#project"];
+vec3_scale        = instance.exports["Vec3#scale"];
+vec3_set          = instance.exports["Vec3#set"];
+vec3_sub          = instance.exports["Vec3#sub"];
+vec3_sub2         = instance.exports["Vec3#sub2"];
 
-    /**
-     * @constructor
-     * @name pc.Vec3
-     * @classdesc A 3-dimensional vector.
-     * @description Creates a new Vec3 object.
-     * @param {Number} [x] The x value. If x is an array of length 3, the array will be used to populate all components.
-     * @param {Number} [y] The y value.
-     * @param {Number} [z] The z value.
-     * @example
-     * var v = new pc.Vec3(1, 2, 3);
-     */
-    var Vec3 = function (x, y, z) {
-        if (x && x.length === 3) {
-            this.x = x[0];
-            this.y = x[1];
-            this.z = x[2];
-        } else {
-            this.x = x || 0;
-            this.y = y || 0;
-            this.z = z || 0;
-        }
-    };
+/**
+ * @constructor
+ */
 
-    Object.assign(Vec3.prototype, {
-        /**
-         * @function
-         * @name pc.Vec3#add
-         * @description Adds a 3-dimensional vector to another in place.
-         * @param {pc.Vec3} rhs The vector to add to the specified vector.
-         * @returns {pc.Vec3} Self for chaining.
-         * @example
-         * var a = new pc.Vec3(10, 10, 10);
-         * var b = new pc.Vec3(20, 20, 20);
-         *
-         * a.add(b);
-         *
-         * // Should output [30, 30, 30]
-         * console.log("The result of the addition is: " + a.toString());
-         */
-        add: function (rhs) {
-            this.x += rhs.x;
-            this.y += rhs.y;
-            this.z += rhs.z;
+pc.Vec3 = function(x, y, z) {
+	if (x && x.length === 3) {
+		this.ptr = vec3_constructor(0, x[0], x[1], x[2]);
+	} else {
+		this.ptr = vec3_constructor(0, x || 0, y || 0, z || 0);
+	}
+}
 
-            return this;
-        },
+pc.Vec3.wrap = function(ptr) {
+	var tmp = Object.create(pc.Vec3.prototype);
+	tmp.ptr = ptr;
+	return tmp;
+}
 
-        /**
-         * @function
-         * @name pc.Vec3#add2
-         * @description Adds two 3-dimensional vectors together and returns the result.
-         * @param {pc.Vec3} lhs The first vector operand for the addition.
-         * @param {pc.Vec3} rhs The second vector operand for the addition.
-         * @returns {pc.Vec3} Self for chaining.
-         * @example
-         * var a = new pc.Vec3(10, 10, 10);
-         * var b = new pc.Vec3(20, 20, 20);
-         * var r = new pc.Vec3();
-         *
-         * r.add2(a, b);
-         * // Should output [30, 30, 30]
-         *
-         * console.log("The result of the addition is: " + r.toString());
-         */
-        add2: function (lhs, rhs) {
-            this.x = lhs.x + rhs.x;
-            this.y = lhs.y + rhs.y;
-            this.z = lhs.z + rhs.z;
+pc.Vec3.prototype.add = function(rhs) {
+	vec3_add(this.ptr, rhs.ptr);
+	return this;
+}
 
-            return this;
-        },
+pc.Vec3.prototype.add2 = function(lhs, rhs) {
+	vec3_add2(this.ptr, lhs.ptr, rhs.ptr);
+	return this;
+}
 
-        /**
-         * @function
-         * @name pc.Vec3#clone
-         * @description Returns an identical copy of the specified 3-dimensional vector.
-         * @returns {pc.Vec3} A 3-dimensional vector containing the result of the cloning.
-         * @example
-         * var v = new pc.Vec3(10, 20, 30);
-         * var vclone = v.clone();
-         * console.log("The result of the cloning is: " + vclone.toString());
-         */
-        clone: function () {
-            return new Vec3().copy(this);
-        },
+pc.Vec3.prototype.clone = function() {
+	var tmp = vec3_clone(this.ptr);
+	return pc.Vec3.wrap(tmp);
+}
 
-        /**
-         * @function
-         * @name pc.Vec3#copy
-         * @description Copied the contents of a source 3-dimensional vector to a destination 3-dimensional vector.
-         * @param {pc.Vec3} rhs A vector to copy to the specified vector.
-         * @returns {pc.Vec3} Self for chaining.
-         * @example
-         * var src = new pc.Vec3(10, 20, 30);
-         * var dst = new pc.Vec3();
-         *
-         * dst.copy(src);
-         *
-         * console.log("The two vectors are " + (dst.equals(src) ? "equal" : "different"));
-         */
-        copy: function (rhs) {
-            this.x = rhs.x;
-            this.y = rhs.y;
-            this.z = rhs.z;
+pc.Vec3.prototype.copy = function(rhs) {
+	vec3_copy(this.ptr, rhs.ptr);
+	return this;
+}
 
-            return this;
-        },
+pc.Vec3.prototype.cross = function(lhs, rhs) {
+	vec3_cross(this.ptr, lhs.ptr, rhs.ptr);
+	return this;
+}
 
-        /**
-         * @function
-         * @name pc.Vec3#cross
-         * @description Returns the result of a cross product operation performed on the two specified 3-dimensional vectors.
-         * @param {pc.Vec3} lhs The first 3-dimensional vector operand of the cross product.
-         * @param {pc.Vec3} rhs The second 3-dimensional vector operand of the cross product.
-         * @returns {pc.Vec3} Self for chaining.
-         * @example
-         * var back = new pc.Vec3().cross(pc.Vec3.RIGHT, pc.Vec3.UP);
-         *
-         * // Should print the Z axis (i.e. [0, 0, 1])
-         * console.log("The result of the cross product is: " + back.toString());
-         */
-        cross: function (lhs, rhs) {
-            // Create temporary variables in case lhs or rhs are 'this'
-            var lx = lhs.x;
-            var ly = lhs.y;
-            var lz = lhs.z;
-            var rx = rhs.x;
-            var ry = rhs.y;
-            var rz = rhs.z;
+pc.Vec3.prototype.dot = function(rhs) {
+	return vec3_dot(this.ptr, rhs.ptr);
+}
 
-            this.x = ly * rz - ry * lz;
-            this.y = lz * rx - rz * lx;
-            this.z = lx * ry - rx * ly;
+pc.Vec3.prototype.equals = function(rhs) {
+	return !!vec3_equals(this.ptr, rhs.ptr);
+}
 
-            return this;
-        },
+pc.Vec3.prototype.length = function() {
+	return vec3_length(this.ptr);
+}
 
-        /**
-         * @function
-         * @name pc.Vec3#dot
-         * @description Returns the result of a dot product operation performed on the two specified 3-dimensional vectors.
-         * @param {pc.Vec3} rhs The second 3-dimensional vector operand of the dot product.
-         * @returns {Number} The result of the dot product operation.
-         * @example
-         * var v1 = new pc.Vec3(5, 10, 20);
-         * var v2 = new pc.Vec3(10, 20, 40);
-         * var v1dotv2 = v1.dot(v2);
-         * console.log("The result of the dot product is: " + v1dotv2);
-         */
-        dot: function (rhs) {
-            return this.x * rhs.x + this.y * rhs.y + this.z * rhs.z;
-        },
+pc.Vec3.prototype.lengthSq = function() {
+	return vec3_lengthSq(this.ptr);
+}
 
-        /**
-         * @function
-         * @name pc.Vec3#equals
-         * @description Reports whether two vectors are equal.
-         * @param {pc.Vec3} rhs The vector to compare to the specified vector.
-         * @returns {Boolean} true if the vectors are equal and false otherwise.
-         * @example
-         * var a = new pc.Vec3(1, 2, 3);
-         * var b = new pc.Vec3(4, 5, 6);
-         * console.log("The two vectors are " + (a.equals(b) ? "equal" : "different"));
-         */
-        equals: function (rhs) {
-            return this.x === rhs.x && this.y === rhs.y && this.z === rhs.z;
-        },
+pc.Vec3.prototype.lerp = function(lhs, rhs, alpha) {
+	vec3_lerp(this.ptr, lhs.ptr, rhs.ptr, alpha);
+	return this;
+}
 
-        /**
-         * @function
-         * @name pc.Vec3#length
-         * @description Returns the magnitude of the specified 3-dimensional vector.
-         * @returns {Number} The magnitude of the specified 3-dimensional vector.
-         * @example
-         * var vec = new pc.Vec3(3, 4, 0);
-         * var len = vec.length();
-         * // Should output 5
-         * console.log("The length of the vector is: " + len);
-         */
-        length: function () {
-            return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
-        },
+pc.Vec3.prototype.mul = function(rhs) {
+	vec3_mul(this.ptr, rhs.ptr);
+	return this;
+}
 
-        /**
-         * @function
-         * @name pc.Vec3#lengthSq
-         * @description Returns the magnitude squared of the specified 3-dimensional vector.
-         * @returns {Number} The magnitude of the specified 3-dimensional vector.
-         * @example
-         * var vec = new pc.Vec3(3, 4, 0);
-         * var len = vec.lengthSq();
-         * // Should output 25
-         * console.log("The length squared of the vector is: " + len);
-         */
-        lengthSq: function () {
-            return this.x * this.x + this.y * this.y + this.z * this.z;
-        },
+pc.Vec3.prototype.mul2 = function(lhs, rhs) {
+	vec3_mul2(this.ptr, lhs.ptr, rhs.ptr);
+	return this;
+}
 
-        /**
-         * @function
-         * @name pc.Vec3#lerp
-         * @description Returns the result of a linear interpolation between two specified 3-dimensional vectors.
-         * @param {pc.Vec3} lhs The 3-dimensional to interpolate from.
-         * @param {pc.Vec3} rhs The 3-dimensional to interpolate to.
-         * @param {Number} alpha The value controlling the point of interpolation. Between 0 and 1, the linear interpolant
-         * will occur on a straight line between lhs and rhs. Outside of this range, the linear interpolant will occur on
-         * a ray extrapolated from this line.
-         * @returns {pc.Vec3} Self for chaining.
-         * @example
-         * var a = new pc.Vec3(0, 0, 0);
-         * var b = new pc.Vec3(10, 10, 10);
-         * var r = new pc.Vec3();
-         *
-         * r.lerp(a, b, 0);   // r is equal to a
-         * r.lerp(a, b, 0.5); // r is 5, 5, 5
-         * r.lerp(a, b, 1);   // r is equal to b
-         */
-        lerp: function (lhs, rhs, alpha) {
-            this.x = lhs.x + alpha * (rhs.x - lhs.x);
-            this.y = lhs.y + alpha * (rhs.y - lhs.y);
-            this.z = lhs.z + alpha * (rhs.z - lhs.z);
+pc.Vec3.prototype.normalize = function() {
+	vec3_normalize(this.ptr);
+	return this;
+}
 
-            return this;
-        },
+pc.Vec3.prototype.project = function(rhs) {
+	vec3_project(this.ptr, rhs.ptr);
+	return this;
+}
 
-        /**
-         * @function
-         * @name pc.Vec3#mul
-         * @description Multiplies a 3-dimensional vector to another in place.
-         * @param {pc.Vec3} rhs The 3-dimensional vector used as the second multiplicand of the operation.
-         * @returns {pc.Vec3} Self for chaining.
-         * @example
-         * var a = new pc.Vec3(2, 3, 4);
-         * var b = new pc.Vec3(4, 5, 6);
-         *
-         * a.mul(b);
-         *
-         * // Should output 8, 15, 24
-         * console.log("The result of the multiplication is: " + a.toString());
-         */
-        mul: function (rhs) {
-            this.x *= rhs.x;
-            this.y *= rhs.y;
-            this.z *= rhs.z;
+pc.Vec3.prototype.scale = function(scalar) {
+	vec3_scale(this.ptr, scalar);
+	return this;
+}
 
-            return this;
-        },
+pc.Vec3.prototype.set = function(x, y, z) {
+	vec3_set(this.ptr, x, y, z);
+	return this;
+}
 
-        /**
-         * @function
-         * @name pc.Vec3#mul2
-         * @description Returns the result of multiplying the specified 3-dimensional vectors together.
-         * @param {pc.Vec3} lhs The 3-dimensional vector used as the first multiplicand of the operation.
-         * @param {pc.Vec3} rhs The 3-dimensional vector used as the second multiplicand of the operation.
-         * @returns {pc.Vec3} Self for chaining.
-         * @example
-         * var a = new pc.Vec3(2, 3, 4);
-         * var b = new pc.Vec3(4, 5, 6);
-         * var r = new pc.Vec3();
-         *
-         * r.mul2(a, b);
-         *
-         * // Should output 8, 15, 24
-         * console.log("The result of the multiplication is: " + r.toString());
-         */
-        mul2: function (lhs, rhs) {
-            this.x = lhs.x * rhs.x;
-            this.y = lhs.y * rhs.y;
-            this.z = lhs.z * rhs.z;
+pc.Vec3.prototype.sub = function(rhs) {
+	vec3_sub(this.ptr, rhs.ptr);
+	return this;
+}
 
-            return this;
-        },
+pc.Vec3.prototype.sub2 = function(lhs, rhs) {
+	vec3_sub2(this.ptr, lhs.ptr, rhs.ptr);
+	return this;
+}
 
-        /**
-         * @function
-         * @name pc.Vec3#normalize
-         * @description Returns the specified 3-dimensional vector copied and converted to a unit vector.
-         * If the vector has a length of zero, the vector's elements will be set to zero.
-         * @returns {pc.Vec3} The result of the normalization.
-         * @example
-         * var v = new pc.Vec3(25, 0, 0);
-         *
-         * v.normalize();
-         *
-         * // Should output 1, 0, 0, 0
-         * console.log("The result of the vector normalization is: " + v.toString());
-         */
-        normalize: function () {
-            var lengthSq = this.x * this.x + this.y * this.y + this.z * this.z;
-            if (lengthSq > 0) {
-                var invLength = 1 / Math.sqrt(lengthSq);
-                this.x *= invLength;
-                this.y *= invLength;
-                this.z *= invLength;
-            }
+pc.Vec3.prototype.toString = function() {
+	return '[' + this.x + ', ' + this.y + ', ' + this.z + ']';
+}
 
-            return this;
-        },
+pc.Vec3.prototype.toStringFixed = function(n) {
+	return '[' + this.x.toFixed(n) + ', ' + this.y.toFixed(n) + ', ' + this.z.toFixed(n) + ']';
+}
 
-        /**
-         * @function
-         * @name  pc.Vec3#project
-         * @description Projects this 3-dimensional vector onto the specified vector.
-         * @param {pc.Vec3} rhs The vector onto which the original vector will be projected on.
-         * @returns {pc.Vec3} Self for chaining.
-         * @example
-         * var v = new pc.Vec3(5, 5, 5);
-         * var normal = new pc.Vec3(1, 0, 0);
-         *
-         * v.project(normal);
-         *
-         * // Should output 5, 0, 0
-         * console.log("The result of the vector projection is: " + v.toString());
-         */
-        project: function (rhs) {
-            var a_dot_b = this.x * rhs.x + this.y * rhs.y + this.z * rhs.z;
-            var b_dot_b = rhs.x * rhs.x + rhs.y * rhs.y + rhs.z * rhs.z;
-            var s = a_dot_b / b_dot_b;
-            this.x = rhs.x * s;
-            this.y = rhs.y * s;
-            this.z = rhs.z * s;
-            return this;
-        },
+Object.defineProperty(pc.Vec3.prototype, 'x', {
+	get: function() {
+		return module.F32[this.ptr >> 2]; // the shifting is same as dividing by 4, used to quickly lookup the value in module.F32
+	},
+	set: function(newValue) {
+		module.F32[this.ptr >> 2] = newValue;
+	}
+});
 
-        /**
-         * @function
-         * @name pc.Vec3#scale
-         * @description Scales each dimension of the specified 3-dimensional vector by the supplied
-         * scalar value.
-         * @param {Number} scalar The value by which each vector component is multiplied.
-         * @returns {pc.Vec3} Self for chaining.
-         * @example
-         * var v = new pc.Vec3(2, 4, 8);
-         *
-         * // Multiply by 2
-         * v.scale(2);
-         *
-         * // Negate
-         * v.scale(-1);
-         *
-         * // Divide by 2
-         * v.scale(0.5);
-         */
-        scale: function (scalar) {
-            this.x *= scalar;
-            this.y *= scalar;
-            this.z *= scalar;
+Object.defineProperty(pc.Vec3.prototype, 'y', {
+	get: function() {
+		return module.F32[(this.ptr >> 2) + 1];
+	},
+	set: function(newValue) {
+		module.F32[(this.ptr >> 2) + 1] = newValue;
+	}
+});
 
-            return this;
-        },
+Object.defineProperty(pc.Vec3.prototype, 'z', {
+	get: function() {
+		return module.F32[(this.ptr >> 2) + 2];
+	},
+	set: function(newValue) {
+		module.F32[(this.ptr >> 2) + 2] = newValue;
+	}
+});
 
-        /**
-         * @function
-         * @name pc.Vec3#set
-         * @description Sets the specified 3-dimensional vector to the supplied numerical values.
-         * @param {Number} x The value to set on the first component of the vector.
-         * @param {Number} y The value to set on the second component of the vector.
-         * @param {Number} z The value to set on the third component of the vector.
-         * @returns {pc.Vec3} Self for chaining.
-         * @example
-         * var v = new pc.Vec3();
-         * v.set(5, 10, 20);
-         *
-         * // Should output 5, 10, 20
-         * console.log("The result of the vector set is: " + v.toString());
-         */
-        set: function (x, y, z) {
-            this.x = x;
-            this.y = y;
-            this.z = z;
 
-            return this;
-        },
+/**
+ * @static
+ * @readonly
+ * @type pc.Vec3
+ * @name pc.Vec3.BACK
+ * @description A constant vector set to [0, 0, 1].
+ */
+Object.defineProperty(pc.Vec3, 'BACK', {
+	get: (function () {
+		var back = new pc.Vec3(0, 0, 1);
+		return function () {
+			return back;
+		};
+	}())
+});
 
-        /**
-         * @function
-         * @name pc.Vec3#sub
-         * @description Subtracts a 3-dimensional vector from another in place.
-         * @param {pc.Vec3} rhs The vector to add to the specified vector.
-         * @returns {pc.Vec3} Self for chaining.
-         * @example
-         * var a = new pc.Vec3(10, 10, 10);
-         * var b = new pc.Vec3(20, 20, 20);
-         *
-         * a.sub(b);
-         *
-         * // Should output [-10, -10, -10]
-         * console.log("The result of the addition is: " + a.toString());
-         */
-        sub: function (rhs) {
-            this.x -= rhs.x;
-            this.y -= rhs.y;
-            this.z -= rhs.z;
+/**
+ * @static
+ * @readonly
+ * @type pc.Vec3
+ * @name pc.Vec3.DOWN
+ * @description A constant vector set to [0, -1, 0].
+ */
+Object.defineProperty(pc.Vec3, 'DOWN', {
+	get: (function () {
+		var down = new pc.Vec3(0, -1, 0);
+		return function () {
+			return down;
+		};
+	}())
+});
 
-            return this;
-        },
+/**
+ * @static
+ * @readonly
+ * @type pc.Vec3
+ * @name pc.Vec3.FORWARD
+ * @description A constant vector set to [0, 0, -1].
+ */
+Object.defineProperty(pc.Vec3, 'FORWARD', {
+	get: (function () {
+		var forward = new pc.Vec3(0, 0, -1);
+		return function () {
+			return forward;
+		};
+	}())
+});
 
-        /**
-         * @function
-         * @name pc.Vec3#sub2
-         * @description Subtracts two 3-dimensional vectors from one another and returns the result.
-         * @param {pc.Vec3} lhs The first vector operand for the addition.
-         * @param {pc.Vec3} rhs The second vector operand for the addition.
-         * @returns {pc.Vec3} Self for chaining.
-         * @example
-         * var a = new pc.Vec3(10, 10, 10);
-         * var b = new pc.Vec3(20, 20, 20);
-         * var r = new pc.Vec3();
-         *
-         * r.sub2(a, b);
-         *
-         * // Should output [-10, -10, -10]
-         * console.log("The result of the addition is: " + r.toString());
-         */
-        sub2: function (lhs, rhs) {
-            this.x = lhs.x - rhs.x;
-            this.y = lhs.y - rhs.y;
-            this.z = lhs.z - rhs.z;
+/**
+ * @field
+ * @static
+ * @readonly
+ * @type pc.Vec3
+ * @name pc.Vec3.LEFT
+ * @description A constant vector set to [-1, 0, 0].
+ */
+Object.defineProperty(pc.Vec3, 'LEFT', {
+	get: (function () {
+		var left = new pc.Vec3(-1, 0, 0);
+		return function () {
+			return left;
+		};
+	}())
+});
 
-            return this;
-        },
+/**
+ * @field
+ * @static
+ * @readonly
+ * @type pc.Vec3
+ * @name pc.Vec3.ONE
+ * @description A constant vector set to [1, 1, 1].
+ */
+Object.defineProperty(pc.Vec3, 'ONE', {
+	get: (function () {
+		var one = new pc.Vec3(1, 1, 1);
+		return function () {
+			return one;
+		};
+	}())
+});
 
-        /**
-         * @function
-         * @name pc.Vec3#toString
-         * @description Converts the vector to string form.
-         * @returns {String} The vector in string form.
-         * @example
-         * var v = new pc.Vec3(20, 10, 5);
-         * // Should output '[20, 10, 5]'
-         * console.log(v.toString());
-         */
-        toString: function () {
-            return '[' + this.x + ', ' + this.y + ', ' + this.z + ']';
-        }
-    });
+/**
+ * @field
+ * @static
+ * @readonly
+ * @type pc.Vec3
+ * @name pc.Vec3.RIGHT
+ * @description A constant vector set to [1, 0, 0].
+ */
+Object.defineProperty(pc.Vec3, 'RIGHT', {
+	get: (function () {
+		var right = new pc.Vec3(1, 0, 0);
+		return function () {
+			return right;
+		};
+	}())
+});
 
-    /**
-     * @name pc.Vec3#x
-     * @type Number
-     * @description The first component of the vector.
-     * @example
-     * var vec = new pc.Vec3(10, 20, 30);
-     *
-     * // Get x
-     * var x = vec.x;
-     *
-     * // Set x
-     * vec.x = 0;
-     */
-    /**
-     * @name pc.Vec3#y
-     * @type Number
-     * @description The second component of the vector.
-     * @example
-     * var vec = new pc.Vec3(10, 20, 30);
-     *
-     * // Get y
-     * var y = vec.y;
-     *
-     * // Set y
-     * vec.y = 0;
-     */
-    /**
-     * @name pc.Vec3#z
-     * @type Number
-     * @description The third component of the vector.
-     * @example
-     * var vec = new pc.Vec3(10, 20, 30);
-     *
-     * // Get z
-     * var z = vec.z;
-     *
-     * // Set z
-     * vec.z = 0;
-     */
+/**
+ * @field
+ * @static
+ * @readonly
+ * @type pc.Vec3
+ * @name pc.Vec3.UP
+ * @description A constant vector set to [0, 1, 0].
+ */
+Object.defineProperty(pc.Vec3, 'UP', {
+	get: (function () {
+		var down = new pc.Vec3(0, 1, 0);
+		return function () {
+			return down;
+		};
+	}())
+});
 
-    /**
-     * @static
-     * @readonly
-     * @type pc.Vec3
-     * @name pc.Vec3.BACK
-     * @description A constant vector set to [0, 0, 1].
-     */
-    Object.defineProperty(Vec3, 'BACK', {
-        get: (function () {
-            var back = new Vec3(0, 0, 1);
-            return function () {
-                return back;
-            };
-        }())
-    });
-
-    /**
-     * @static
-     * @readonly
-     * @type pc.Vec3
-     * @name pc.Vec3.DOWN
-     * @description A constant vector set to [0, -1, 0].
-     */
-    Object.defineProperty(Vec3, 'DOWN', {
-        get: (function () {
-            var down = new Vec3(0, -1, 0);
-            return function () {
-                return down;
-            };
-        }())
-    });
-
-    /**
-     * @static
-     * @readonly
-     * @type pc.Vec3
-     * @name pc.Vec3.FORWARD
-     * @description A constant vector set to [0, 0, -1].
-     */
-    Object.defineProperty(Vec3, 'FORWARD', {
-        get: (function () {
-            var forward = new Vec3(0, 0, -1);
-            return function () {
-                return forward;
-            };
-        }())
-    });
-
-    /**
-     * @field
-     * @static
-     * @readonly
-     * @type pc.Vec3
-     * @name pc.Vec3.LEFT
-     * @description A constant vector set to [-1, 0, 0].
-     */
-    Object.defineProperty(Vec3, 'LEFT', {
-        get: (function () {
-            var left = new Vec3(-1, 0, 0);
-            return function () {
-                return left;
-            };
-        }())
-    });
-
-    /**
-     * @field
-     * @static
-     * @readonly
-     * @type pc.Vec3
-     * @name pc.Vec3.ONE
-     * @description A constant vector set to [1, 1, 1].
-     */
-    Object.defineProperty(Vec3, 'ONE', {
-        get: (function () {
-            var one = new Vec3(1, 1, 1);
-            return function () {
-                return one;
-            };
-        }())
-    });
-
-    /**
-     * @field
-     * @static
-     * @readonly
-     * @type pc.Vec3
-     * @name pc.Vec3.RIGHT
-     * @description A constant vector set to [1, 0, 0].
-     */
-    Object.defineProperty(Vec3, 'RIGHT', {
-        get: (function () {
-            var right = new Vec3(1, 0, 0);
-            return function () {
-                return right;
-            };
-        }())
-    });
-
-    /**
-     * @field
-     * @static
-     * @readonly
-     * @type pc.Vec3
-     * @name pc.Vec3.UP
-     * @description A constant vector set to [0, 1, 0].
-     */
-    Object.defineProperty(Vec3, 'UP', {
-        get: (function () {
-            var down = new Vec3(0, 1, 0);
-            return function () {
-                return down;
-            };
-        }())
-    });
-
-    /**
-     * @field
-     * @static
-     * @readonly
-     * @type pc.Vec3
-     * @name pc.Vec3.ZERO
-     * @description A constant vector set to [0, 0, 0].
-     */
-    Object.defineProperty(Vec3, 'ZERO', {
-        get: (function () {
-            var zero = new Vec3(0, 0, 0);
-            return function () {
-                return zero;
-            };
-        }())
-    });
-
-    return {
-        Vec3: Vec3
-    };
-}()));
+/**
+ * @field
+ * @static
+ * @readonly
+ * @type pc.Vec3
+ * @name pc.Vec3.ZERO
+ * @description A constant vector set to [0, 0, 0].
+ */
+Object.defineProperty(pc.Vec3, 'ZERO', {
+	get: (function () {
+		var zero = new pc.Vec3(0, 0, 0);
+		return function () {
+			return zero;
+		};
+	}())
+});

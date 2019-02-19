@@ -1,243 +1,124 @@
-Object.assign(pc, (function () {
-    'use strict';
+mat3_constructor  = instance.exports["Mat3#constructor"];
 
-    /**
-     * @constructor
-     * @name pc.Mat3
-     * @classdesc A 3x3 matrix.
-     * @description Creates a new identity Mat3 object.
-     */
-    var Mat3 = function () {
-        var data;
-        // Create an identity matrix. Note that a new Float32Array has all elements set
-        // to zero by default, so we only need to set the relevant elements to one.
-        data = new Float32Array(9);
-        data[0] = data[4] = data[8] = 1;
-        this.data = data;
-    };
+mat3_add          = instance.exports["Mat3#add"];
+mat3_add2         = instance.exports["Mat3#add2"];
+mat3_clone        = instance.exports["Mat3#clone"];
+mat3_copy         = instance.exports["Mat3#copy"];
+mat3_equals       = instance.exports["Mat3#equals"];
+mat3_isIdentity   = instance.exports["Mat3#isIdentity"];
+mat3_setIdentity  = instance.exports["Mat3#setIdentity"];
+mat3_transpose    = instance.exports["Mat3#transpose"];
+mat3_mul2         = instance.exports["Mat3#mul2"];
+mat3_mul          = instance.exports["Mat3#mul"];
 
-    Object.assign(Mat3.prototype, {
-        /**
-         * @function
-         * @name pc.Mat3#clone
-         * @description Creates a duplicate of the specified matrix.
-         * @returns {pc.Mat3} A duplicate matrix.
-         * @example
-         * var src = new pc.Mat3().translate(10, 20, 30);
-         * var dst = src.clone();
-         * console.log("The two matrices are " + (src.equals(dst) ? "equal" : "different"));
-         */
-        clone: function () {
-            return new pc.Mat3().copy(this);
-        },
+pc.Mat3 = function() {
+	this.ptr = mat3_constructor(0);
+	this.setupWrapper();
+}
 
-        /**
-         * @function
-         * @name pc.Mat3#copy
-         * @description Copies the contents of a source 3x3 matrix to a destination 3x3 matrix.
-         * @param {pc.Mat3} rhs A 3x3 matrix to be copied.
-         * @returns {pc.Mat3} Self for chaining
-         * @example
-         * var src = new pc.Mat3().translate(10, 20, 30);
-         * var dst = new pc.Mat3();
-         * dst.copy(src);
-         * console.log("The two matrices are " + (src.equals(dst) ? "equal" : "different"));
-         */
-        copy: function (rhs) {
-            var src = rhs.data;
-            var dst = this.data;
+pc.Mat3.wrap = function(ptr) {
+	var tmp = Object.create(pc.Mat3.prototype);
+	tmp.ptr = ptr;
+	tmp.setupWrapper();
+	return tmp;
+}
 
-            dst[0] = src[0];
-            dst[1] = src[1];
-            dst[2] = src[2];
-            dst[3] = src[3];
-            dst[4] = src[4];
-            dst[5] = src[5];
-            dst[6] = src[6];
-            dst[7] = src[7];
-            dst[8] = src[8];
+pc.Mat3.prototype.setupWrapper = function() {
+	//this.wrap = module.Mat3.wrap(this.ptr)
+	this.ptr_data = module.U32[this.ptr >> 2];
+	this.ptr_ptr_data = module.U32[this.ptr_data >> 2];
+	this.data = new Float32Array(instance.exports.memory.buffer, this.ptr_ptr_data + 8, 9);	
+}
 
-            return this;
-        },
+pc.Mat3.prototype.add = function(rhs) {
+	mat3_add(this.ptr, rhs.ptr);
+	return this;
+}
 
-        /**
-         * @function
-         * @name pc.Mat3#set
-         * @description Copies the contents of a source array[9] to a destination 3x3 matrix.
-         * @param {Array} src An array[9] to be copied.
-         * @returns {pc.Mat3} Self for chaining
-         * @example
-         * var dst = new pc.Mat3();
-         * dst.set([0, 1, 2, 3, 4, 5, 6, 7, 8]);
-         */
-        set: function (src) {
-            var dst = this.data;
+pc.Mat3.prototype.add2 = function(lhs, rhs) {
+	mat3_add(this.ptr, lhs.ptr, rhs.ptr);
+	return this;
+}
 
-            dst[0] = src[0];
-            dst[1] = src[1];
-            dst[2] = src[2];
-            dst[3] = src[3];
-            dst[4] = src[4];
-            dst[5] = src[5];
-            dst[6] = src[6];
-            dst[7] = src[7];
-            dst[8] = src[8];
+pc.Mat3.prototype.clone = function() {
+	var ptr = mat3_clone(this.ptr);
+	var tmp = pc.Mat3.wrap(ptr);
+	return tmp;
+}
 
-            return this;
-        },
+pc.Mat3.prototype.copy = function(rhs) {
+	mat3_copy(this.ptr, rhs.ptr);
+	return this;
+}
 
-        /**
-         * @function
-         * @name pc.Mat3#equals
-         * @param {pc.Mat3} rhs The other matrix.
-         * @description Reports whether two matrices are equal.
-         * @returns {Boolean} true if the matrices are equal and false otherwise.
-         * @example
-         * var a = new pc.Mat3().translate(10, 20, 30);
-         * var b = new pc.Mat3();
-         * console.log("The two matrices are " + (a.equals(b) ? "equal" : "different"));
-         */
-        equals: function (rhs) {
-            var l = this.data;
-            var r = rhs.data;
+pc.Mat3.prototype.set = function(src) {
+	var dst = this.data;
 
-            return ((l[0] === r[0]) &&
-                    (l[1] === r[1]) &&
-                    (l[2] === r[2]) &&
-                    (l[3] === r[3]) &&
-                    (l[4] === r[4]) &&
-                    (l[5] === r[5]) &&
-                    (l[6] === r[6]) &&
-                    (l[7] === r[7]) &&
-                    (l[8] === r[8]));
-        },
+	dst[0] = src[0];
+	dst[1] = src[1];
+	dst[2] = src[2];
+	dst[3] = src[3];
+	dst[4] = src[4];
+	dst[5] = src[5];
+	dst[6] = src[6];
+	dst[7] = src[7];
+	dst[8] = src[8];
 
-        /**
-         * @function
-         * @name pc.Mat3#isIdentity
-         * @description Reports whether the specified matrix is the identity matrix.
-         * @returns {Boolean} true if the matrix is identity and false otherwise.
-         * @example
-         * var m = new pc.Mat3();
-         * console.log("The matrix is " + (m.isIdentity() ? "identity" : "not identity"));
-         */
-        isIdentity: function () {
-            var m = this.data;
-            return ((m[0] === 1) &&
-                    (m[1] === 0) &&
-                    (m[2] === 0) &&
-                    (m[3] === 0) &&
-                    (m[4] === 1) &&
-                    (m[5] === 0) &&
-                    (m[6] === 0) &&
-                    (m[7] === 0) &&
-                    (m[8] === 1));
-        },
+	return this;
+}
 
-        /**
-         * @function
-         * @name pc.Mat3#setIdentity
-         * @description Sets the matrix to the identity matrix.
-         * @returns {pc.Mat3} Self for chaining.
-         * @example
-         * m.setIdentity();
-         * console.log("The matrix is " + (m.isIdentity() ? "identity" : "not identity"));
-         */
-        setIdentity: function () {
-            var m = this.data;
-            m[0] = 1;
-            m[1] = 0;
-            m[2] = 0;
+pc.Mat3.prototype.equals = function(rhs) {
+	return !!mat3_equals(this.ptr, rhs.ptr);
+}
 
-            m[3] = 0;
-            m[4] = 1;
-            m[5] = 0;
+pc.Mat3.prototype.isIdentity = function() {
+	return !!mat3_isIdentity(this.ptr);
+}
 
-            m[6] = 0;
-            m[7] = 0;
-            m[8] = 1;
+pc.Mat3.prototype.setIdentity = function() {
+	mat3_setIdentity(this.ptr);
+	return this;
+}
 
-            return this;
-        },
+pc.Mat3.prototype.transpose = function() {
+	mat3_transpose(this.ptr);
+	return this;
+}
 
-        /**
-         * @function
-         * @name pc.Mat3#toString
-         * @description Converts the matrix to string form.
-         * @returns {String} The matrix in string form.
-         * @example
-         * var m = new pc.Mat3();
-         * // Should output '[1, 0, 0, 0, 1, 0, 0, 0, 1]'
-         * console.log(m.toString());
-         */
-        toString: function () {
-            var t = '[';
-            for (var i = 0; i < 9; i++) {
-                t += this.data[i];
-                t += (i !== 8) ? ', ' : '';
-            }
-            t += ']';
-            return t;
-        },
+pc.Mat3.prototype.toString = function() {
+	var t = '[';
+	for (var i = 0; i < 9; i++) {
+		t += this.data[i];
+		t += (i !== 8) ? ', ' : '';
+	}
+	t += ']';
+	return t;
+}
 
-        /**
-         * @function
-         * @name pc.Mat3#transpose
-         * @description Generates the transpose of the specified 3x3 matrix.
-         * @returns {pc.Mat3} Self for chaining.
-         * @example
-         * var m = new pc.Mat3();
-         *
-         * // Transpose in place
-         * m.transpose();
-         */
-        transpose: function () {
-            var m = this.data;
+pc.Mat3.prototype.toStringFixed = function(n) {
+	var t = '[';
+	for (var i = 0; i < 9; i++) {
+		t += this.data[i].toFixed(n);
+		t += (i !== 8) ? ', ' : '';
+	}
+	t += ']';
+	return t;
+}
 
-            var tmp;
-            tmp = m[1]; m[1] = m[3]; m[3] = tmp;
-            tmp = m[2]; m[2] = m[6]; m[6] = tmp;
-            tmp = m[5]; m[5] = m[7]; m[7] = tmp;
+Object.defineProperty(pc.Mat3, 'IDENTITY', {
+	get: function () {
+		var identity = new pc.Mat3();
+		return function () {
+			return identity;
+		};
+	}()
+});
 
-            return this;
-        }
-    });
-
-    /**
-     * @field
-     * @static
-     * @readonly
-     * @type pc.Mat3
-     * @name pc.Mat3.IDENTITY
-     * @description A constant matrix set to the identity.
-     */
-    Object.defineProperty(Mat3, 'IDENTITY', {
-        get: function () {
-            var identity = new Mat3();
-            return function () {
-                return identity;
-            };
-        }()
-    });
-
-    /**
-     * @field
-     * @static
-     * @readonly
-     * @type pc.Mat3
-     * @name pc.Mat3.ZERO
-     * @description A constant matrix with all elements set to 0.
-     */
-    Object.defineProperty(Mat3, 'ZERO', {
-        get: function () {
-            var zero = new Mat3().set([0, 0, 0, 0, 0, 0, 0, 0, 0]);
-            return function () {
-                return zero;
-            };
-        }()
-    });
-
-    return {
-        Mat3: Mat3
-    };
-}()));
+Object.defineProperty(pc.Mat3, 'ZERO', {
+	get: function () {
+		var zero = new pc.Mat3().set([0, 0, 0, 0, 0, 0, 0, 0, 0]);
+		return function () {
+			return zero;
+		};
+	}()
+});

@@ -1,496 +1,192 @@
-Object.assign(pc, (function () {
-    'use strict';
+vec4_add          = instance.exports["Vec4#add"];
+vec4_add2         = instance.exports["Vec4#add2"];
+vec4_clone        = instance.exports["Vec4#clone"];
+vec4_constructor  = instance.exports["Vec4#constructor"];
+vec4_copy         = instance.exports["Vec4#copy"];
+//vec4_cross        = instance.exports["Vec4#cross"];
+vec4_dot          = instance.exports["Vec4#dot"];
+vec4_equals       = instance.exports["Vec4#equals"];
+vec4_length       = instance.exports["Vec4#length"];
+vec4_lengthSq     = instance.exports["Vec4#lengthSq"];
+vec4_lerp         = instance.exports["Vec4#lerp"];
+vec4_mul          = instance.exports["Vec4#mul"];
+vec4_mul2         = instance.exports["Vec4#mul2"];
+vec4_normalize    = instance.exports["Vec4#normalize"];
+//vec4_project      = instance.exports["Vec4#project"];
+vec4_scale        = instance.exports["Vec4#scale"];
+vec4_set          = instance.exports["Vec4#set"];
+vec4_sub          = instance.exports["Vec4#sub"];
+vec4_sub2         = instance.exports["Vec4#sub2"];
 
-    /**
-     * @constructor
-     * @name pc.Vec4
-     * @classdesc A 4-dimensional vector.
-     * @description Creates a new Vec4 object.
-     * @param {Number} [x] The x value. If x is an array of length 4, the array will be used to populate all components.
-     * @param {Number} [y] The y value.
-     * @param {Number} [z] The z value.
-     * @param {Number} [w] The w value.
-     * @example
-     * var v = new pc.Vec4(1, 2, 3, 4);
-     */
-    var Vec4 = function (x, y, z, w) {
-        if (x && x.length === 4) {
-            this.x = x[0];
-            this.y = x[1];
-            this.z = x[2];
-            this.w = x[3];
-        } else {
-            this.x = x || 0;
-            this.y = y || 0;
-            this.z = z || 0;
-            this.w = w || 0;
-        }
-    };
+/**
+ * @constructor
+ */
 
-    Object.assign(Vec4.prototype, {
-        /**
-         * @function
-         * @name pc.Vec4#add
-         * @description Adds a 4-dimensional vector to another in place.
-         * @param {pc.Vec4} rhs The vector to add to the specified vector.
-         * @returns {pc.Vec4} Self for chaining.
-         * @example
-         * var a = new pc.Vec4(10, 10, 10, 10);
-         * var b = new pc.Vec4(20, 20, 20, 20);
-         *
-         * a.add(b);
-         *
-         * // Should output [30, 30, 30]
-         * console.log("The result of the addition is: " + a.toString());
-         */
-        add: function (rhs) {
-            this.x += rhs.x;
-            this.y += rhs.y;
-            this.z += rhs.z;
-            this.w += rhs.w;
+pc.Vec4 = function(x, y, z, w) {
+	if (x && x.length === 4) {
+		this.ptr = vec4_constructor(0, x[0], x[1], x[2], x[3]);
+	} else {
+		this.ptr = vec4_constructor(0, x || 0, y || 0, z || 0, w || 0);
+	}
+}
 
-            return this;
-        },
+pc.Vec4.wrap = function(ptr) {
+	var tmp = Object.create(pc.Vec4.prototype);
+	tmp.ptr = ptr;
+	return tmp;
+}
 
-        /**
-         * @function
-         * @name pc.Vec4#add2
-         * @description Adds two 4-dimensional vectors together and returns the result.
-         * @param {pc.Vec4} lhs The first vector operand for the addition.
-         * @param {pc.Vec4} rhs The second vector operand for the addition.
-         * @returns {pc.Vec4} Self for chaining.
-         * @example
-         * var a = new pc.Vec4(10, 10, 10, 10);
-         * var b = new pc.Vec4(20, 20, 20, 20);
-         * var r = new pc.Vec4();
-         *
-         * r.add2(a, b);
-         * // Should output [30, 30, 30]
-         *
-         * console.log("The result of the addition is: " + r.toString());
-         */
-        add2: function (lhs, rhs) {
-            this.x = lhs.x + rhs.x;
-            this.y = lhs.y + rhs.y;
-            this.z = lhs.z + rhs.z;
-            this.w = lhs.w + rhs.w;
+pc.Vec4.prototype.add = function(rhs) {
+	vec4_add(this.ptr, rhs.ptr);
+	return this;
+}
 
-            return this;
-        },
+pc.Vec4.prototype.add2 = function(lhs, rhs) {
+	vec4_add2(this.ptr, lhs.ptr, rhs.ptr);
+	return this;
+}
 
-        /**
-         * @function
-         * @name pc.Vec4#clone
-         * @description Returns an identical copy of the specified 4-dimensional vector.
-         * @returns {pc.Vec4} A 4-dimensional vector containing the result of the cloning.
-         * @example
-         * var v = new pc.Vec4(10, 20, 30, 40);
-         * var vclone = v.clone();
-         * console.log("The result of the cloning is: " + vclone.toString());
-         */
-        clone: function () {
-            return new Vec4().copy(this);
-        },
+pc.Vec4.prototype.clone = function() {
+	var tmp = vec4_clone(this.ptr);
+	return pc.Vec4.wrap(tmp);
+}
 
-        /**
-         * @function
-         * @name pc.Vec4#copy
-         * @description Copied the contents of a source 4-dimensional vector to a destination 4-dimensional vector.
-         * @param {pc.Vec4} rhs A vector to copy to the specified vector.
-         * @returns {pc.Vec4} Self for chaining.
-         * @example
-         * var src = new pc.Vec4(10, 20, 30, 40);
-         * var dst = new pc.Vec4();
-         *
-         * dst.copy(src);
-         *
-         * console.log("The two vectors are " + (dst.equals(src) ? "equal" : "different"));
-         */
-        copy: function (rhs) {
-            this.x = rhs.x;
-            this.y = rhs.y;
-            this.z = rhs.z;
-            this.w = rhs.w;
+pc.Vec4.prototype.copy = function(rhs) {
+	vec4_copy(this.ptr, rhs.ptr);
+	return this;
+}
 
-            return this;
-        },
+pc.Vec4.prototype.dot = function(rhs) {
+	return vec4_dot(this.ptr, rhs.ptr);
+}
 
-        /**
-         * @function
-         * @name pc.Vec4#dot
-         * @description Returns the result of a dot product operation performed on the two specified 4-dimensional vectors.
-         * @param {pc.Vec4} rhs The second 4-dimensional vector operand of the dot product.
-         * @returns {Number} The result of the dot product operation.
-         * @example
-         * var v1 = new pc.Vec4(5, 10, 20, 40);
-         * var v2 = new pc.Vec4(10, 20, 40, 80);
-         * var v1dotv2 = v1.dot(v2);
-         * console.log("The result of the dot product is: " + v1dotv2);
-         */
-        dot: function (rhs) {
-            return this.x * rhs.x + this.y * rhs.y + this.z * rhs.z + this.w * rhs.w;
-        },
+pc.Vec4.prototype.equals = function(rhs) {
+	return !!vec4_equals(this.ptr, rhs.ptr);
+}
 
-        /**
-         * @function
-         * @name pc.Vec4#equals
-         * @description Reports whether two vectors are equal.
-         * @param {pc.Vec4} rhs The vector to compare to the specified vector.
-         * @returns {Boolean} true if the vectors are equal and false otherwise.
-         * @example
-         * var a = new pc.Vec4(1, 2, 3, 4);
-         * var b = new pc.Vec4(5, 6, 7, 8);
-         * console.log("The two vectors are " + (a.equals(b) ? "equal" : "different"));
-         */
-        equals: function (rhs) {
-            return this.x === rhs.x && this.y === rhs.y && this.z === rhs.z && this.w === rhs.w;
-        },
+pc.Vec4.prototype.length = function() {
+	return vec4_length(this.ptr);
+}
 
-        /**
-         * @function
-         * @name pc.Vec4#length
-         * @description Returns the magnitude of the specified 4-dimensional vector.
-         * @returns {Number} The magnitude of the specified 4-dimensional vector.
-         * @example
-         * var vec = new pc.Vec4(3, 4, 0, 0);
-         * var len = vec.length();
-         * // Should output 5
-         * console.log("The length of the vector is: " + len);
-         */
-        length: function () {
-            return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z + this.w * this.w);
-        },
+pc.Vec4.prototype.lengthSq = function() {
+	return vec4_lengthSq(this.ptr);
+}
 
-        /**
-         * @function
-         * @name pc.Vec4#lengthSq
-         * @description Returns the magnitude squared of the specified 4-dimensional vector.
-         * @returns {Number} The magnitude of the specified 4-dimensional vector.
-         * @example
-         * var vec = new pc.Vec4(3, 4, 0);
-         * var len = vec.lengthSq();
-         * // Should output 25
-         * console.log("The length squared of the vector is: " + len);
-         */
-        lengthSq: function () {
-            return this.x * this.x + this.y * this.y + this.z * this.z + this.w * this.w;
-        },
+pc.Vec4.prototype.lerp = function(lhs, rhs, alpha) {
+	vec4_lerp(this.ptr, lhs.ptr, rhs.ptr, alpha);
+	return this;
+}
 
-        /**
-         * @function
-         * @name pc.Vec4#lerp
-         * @description Returns the result of a linear interpolation between two specified 4-dimensional vectors.
-         * @param {pc.Vec4} lhs The 4-dimensional to interpolate from.
-         * @param {pc.Vec4} rhs The 4-dimensional to interpolate to.
-         * @param {Number} alpha The value controlling the point of interpolation. Between 0 and 1, the linear interpolant
-         * will occur on a straight line between lhs and rhs. Outside of this range, the linear interpolant will occur on
-         * a ray extrapolated from this line.
-         * @returns {pc.Vec4} Self for chaining.
-         * @example
-         * var a = new pc.Vec4(0, 0, 0, 0);
-         * var b = new pc.Vec4(10, 10, 10, 10);
-         * var r = new pc.Vec4();
-         *
-         * r.lerp(a, b, 0);   // r is equal to a
-         * r.lerp(a, b, 0.5); // r is 5, 5, 5, 5
-         * r.lerp(a, b, 1);   // r is equal to b
-         */
-        lerp: function (lhs, rhs, alpha) {
-            this.x = lhs.x + alpha * (rhs.x - lhs.x);
-            this.y = lhs.y + alpha * (rhs.y - lhs.y);
-            this.z = lhs.z + alpha * (rhs.z - lhs.z);
-            this.w = lhs.w + alpha * (rhs.w - lhs.w);
+pc.Vec4.prototype.mul = function(rhs) {
+	vec4_mul(this.ptr, rhs.ptr);
+	return this;
+}
 
-            return this;
-        },
+pc.Vec4.prototype.mul2 = function(lhs, rhs) {
+	vec4_mul2(this.ptr, lhs.ptr, rhs.ptr);
+	return this;
+}
 
-        /**
-         * @function
-         * @name pc.Vec4#mul
-         * @description Multiplies a 4-dimensional vector to another in place.
-         * @param {pc.Vec4} rhs The 4-dimensional vector used as the second multiplicand of the operation.
-         * @returns {pc.Vec4} Self for chaining.
-         * @example
-         * var a = new pc.Vec4(2, 3, 4, 5);
-         * var b = new pc.Vec4(4, 5, 6, 7);
-         *
-         * a.mul(b);
-         *
-         * // Should output 8, 15, 24, 35
-         * console.log("The result of the multiplication is: " + a.toString());
-         */
-        mul: function (rhs) {
-            this.x *= rhs.x;
-            this.y *= rhs.y;
-            this.z *= rhs.z;
-            this.w *= rhs.w;
+pc.Vec4.prototype.normalize = function() {
+	vec4_normalize(this.ptr);
+	return this;
+}
 
-            return this;
-        },
+pc.Vec4.prototype.scale = function(scalar) {
+	vec4_scale(this.ptr, scalar);
+	return this;
+}
 
-        /**
-         * @function
-         * @name pc.Vec4#mul2
-         * @description Returns the result of multiplying the specified 4-dimensional vectors together.
-         * @param {pc.Vec4} lhs The 4-dimensional vector used as the first multiplicand of the operation.
-         * @param {pc.Vec4} rhs The 4-dimensional vector used as the second multiplicand of the operation.
-         * @returns {pc.Vec4} Self for chaining.
-         * @example
-         * var a = new pc.Vec4(2, 3, 4, 5);
-         * var b = new pc.Vec4(4, 5, 6, 7);
-         * var r = new pc.Vec4();
-         *
-         * r.mul2(a, b);
-         *
-         * // Should output 8, 15, 24, 35
-         * console.log("The result of the multiplication is: " + r.toString());
-         */
-        mul2: function (lhs, rhs) {
-            this.x = lhs.x * rhs.x;
-            this.y = lhs.y * rhs.y;
-            this.z = lhs.z * rhs.z;
-            this.w = lhs.w * rhs.w;
+pc.Vec4.prototype.set = function(x, y, z, w) {
+	vec4_set(this.ptr, x, y, z, w);
+	return this;
+}
 
-            return this;
-        },
+pc.Vec4.prototype.sub = function(rhs) {
+	vec4_sub(this.ptr, rhs.ptr);
+	return this;
+}
 
-        /**
-         * @function
-         * @name pc.Vec4#normalize
-         * @description Returns the specified 4-dimensional vector copied and converted to a unit vector.
-         * If the vector has a length of zero, the vector's elements will be set to zero.
-         * @returns {pc.Vec4} The result of the normalization.
-         * @example
-         * var v = new pc.Vec4(25, 0, 0, 0);
-         *
-         * v.normalize();
-         *
-         * // Should output 1, 0, 0, 0
-         * console.log("The result of the vector normalization is: " + v.toString());
-         */
-        normalize: function () {
-            var lengthSq = this.x * this.x + this.y * this.y + this.z * this.z + this.w * this.w;
-            if (lengthSq > 0) {
-                var invLength = 1 / Math.sqrt(lengthSq);
-                this.x *= invLength;
-                this.y *= invLength;
-                this.z *= invLength;
-                this.w *= invLength;
-            }
+pc.Vec4.prototype.sub2 = function(lhs, rhs) {
+	vec4_sub2(this.ptr, lhs.ptr, rhs.ptr);
+	return this;
+}
 
-            return this;
-        },
+pc.Vec4.prototype.toString = function() {
+	return '[' + this.x + ', ' + this.y + ', ' + this.z + ', ' + this.w + ']';
+}
 
-        /**
-         * @function
-         * @name pc.Vec4#scale
-         * @description Scales each dimension of the specified 4-dimensional vector by the supplied
-         * scalar value.
-         * @param {Number} scalar The value by which each vector component is multiplied.
-         * @returns {pc.Vec4} Self for chaining.
-         * @example
-         * var v = new pc.Vec4(2, 4, 8, 16);
-         *
-         * // Multiply by 2
-         * v.scale(2);
-         *
-         * // Negate
-         * v.scale(-1);
-         *
-         * // Divide by 2
-         * v.scale(0.5);
-         */
-        scale: function (scalar) {
-            this.x *= scalar;
-            this.y *= scalar;
-            this.z *= scalar;
-            this.w *= scalar;
+pc.Vec4.prototype.toStringFixed = function(n) {
+	return '[' + this.x.toFixed(n) + ', ' + this.y.toFixed(n) + ', ' + this.z.toFixed(n) + ', ' + this.w.toFixed(n) + ']';
+}
 
-            return this;
-        },
+Object.defineProperty(pc.Vec4.prototype, 'x', {
+	get: function() {
+		return module.F32[this.ptr >> 2]; // the shifting is same as dividing by 4, used to quickly lookup the value in module.F32
+	},
+	set: function(newValue) {
+		module.F32[this.ptr >> 2] = newValue;
+	}
+});
 
-        /**
-         * @function
-         * @name pc.Vec4#set
-         * @description Sets the specified 4-dimensional vector to the supplied numerical values.
-         * @param {Number} x The value to set on the first component of the vector.
-         * @param {Number} y The value to set on the second component of the vector.
-         * @param {Number} z The value to set on the third component of the vector.
-         * @param {Number} w The value to set on the fourth component of the vector.
-         * @returns {pc.Vec4} Self for chaining.
-         * @example
-         * var v = new pc.Vec4();
-         * v.set(5, 10, 20, 40);
-         *
-         * // Should output 5, 10, 20, 40
-         * console.log("The result of the vector set is: " + v.toString());
-         */
-        set: function (x, y, z, w) {
-            this.x = x;
-            this.y = y;
-            this.z = z;
-            this.w = w;
+Object.defineProperty(pc.Vec4.prototype, 'y', {
+	get: function() {
+		return module.F32[(this.ptr >> 2) + 1];
+	},
+	set: function(newValue) {
+		module.F32[(this.ptr >> 2) + 1] = newValue;
+	}
+});
 
-            return this;
-        },
+Object.defineProperty(pc.Vec4.prototype, 'z', {
+	get: function() {
+		return module.F32[(this.ptr >> 2) + 2];
+	},
+	set: function(newValue) {
+		module.F32[(this.ptr >> 2) + 2] = newValue;
+	}
+});
 
-        /**
-         * @function
-         * @name pc.Vec4#sub
-         * @description Subtracts a 4-dimensional vector from another in place.
-         * @param {pc.Vec4} rhs The vector to add to the specified vector.
-         * @returns {pc.Vec4} Self for chaining.
-         * @example
-         * var a = new pc.Vec4(10, 10, 10, 10);
-         * var b = new pc.Vec4(20, 20, 20, 20);
-         *
-         * a.sub(b);
-         *
-         * // Should output [-10, -10, -10, -10]
-         * console.log("The result of the subtraction is: " + a.toString());
-         */
-        sub: function (rhs) {
-            this.x -= rhs.x;
-            this.y -= rhs.y;
-            this.z -= rhs.z;
-            this.w -= rhs.w;
+Object.defineProperty(pc.Vec4.prototype, 'w', {
+	get: function() {
+		return module.F32[(this.ptr >> 2) + 3];
+	},
+	set: function(newValue) {
+		module.F32[(this.ptr >> 2) + 3] = newValue;
+	}
+});
 
-            return this;
-        },
 
-        /**
-         * @function
-         * @name pc.Vec4#sub2
-         * @description Subtracts two 4-dimensional vectors from one another and returns the result.
-         * @param {pc.Vec4} lhs The first vector operand for the subtraction.
-         * @param {pc.Vec4} rhs The second vector operand for the subtraction.
-         * @returns {pc.Vec4} Self for chaining.
-         * @example
-         * var a = new pc.Vec4(10, 10, 10, 10);
-         * var b = new pc.Vec4(20, 20, 20, 20);
-         * var r = new pc.Vec4();
-         *
-         * r.sub2(a, b);
-         *
-         * // Should output [-10, -10, -10, -10]
-         * console.log("The result of the subtraction is: " + r.toString());
-         */
-        sub2: function (lhs, rhs) {
-            this.x = lhs.x - rhs.x;
-            this.y = lhs.y - rhs.y;
-            this.z = lhs.z - rhs.z;
-            this.w = lhs.w - rhs.w;
+/**
+ * @field
+ * @static
+ * @readonly
+ * @type pc.Vec4
+ * @name pc.Vec4.ONE
+ * @description A constant vector set to [1, 1, 1, 1].
+ */
+Object.defineProperty(pc.Vec4, 'ONE', {
+	get: (function () {
+		var one = new pc.Vec4(1, 1, 1, 1);
+		return function () {
+			return one;
+		};
+	}())
+});
 
-            return this;
-        },
-
-        /**
-         * @function
-         * @name pc.Vec4#toString
-         * @description Converts the vector to string form.
-         * @returns {String} The vector in string form.
-         * @example
-         * var v = new pc.Vec4(20, 10, 5, 0);
-         * // Should output '[20, 10, 5, 0]'
-         * console.log(v.toString());
-         */
-        toString: function () {
-            return '[' + this.x + ', ' + this.y + ', ' + this.z + ', ' + this.w + ']';
-        }
-    });
-
-    /**
-     * @field
-     * @type Number
-     * @name pc.Vec4#x
-     * @description The first component of the vector.
-     * @example
-     * var vec = new pc.Vec4(10, 20, 30, 40);
-     *
-     * // Get x
-     * var x = vec.x;
-     *
-     * // Set x
-     * vec.x = 0;
-     */
-    /**
-     * @field
-     * @type Number
-     * @name pc.Vec4#y
-     * @description The second component of the vector.
-     * @example
-     * var vec = new pc.Vec4(10, 20, 30, 40);
-     *
-     * // Get y
-     * var y = vec.y;
-     *
-     * // Set y
-     * vec.y = 0;
-     */
-    /**
-     * @field
-     * @type Number
-     * @name pc.Vec4#z
-     * @description The third component of the vector.
-     * @example
-     * var vec = new pc.Vec4(10, 20, 30, 40);
-     *
-     * // Get z
-     * var z = vec.z;
-     *
-     * // Set z
-     * vec.z = 0;
-     */
-    /**
-     * @field
-     * @type Number
-     * @name pc.Vec4#w
-     * @description The fourth component of the vector.
-     * @example
-     * var vec = new pc.Vec4(10, 20, 30, 40);
-     *
-     * // Get w
-     * var w = vec.w;
-     *
-     * // Set w
-     * vec.w = 0;
-     */
-
-    /**
-     * @field
-     * @static
-     * @readonly
-     * @type pc.Vec4
-     * @name pc.Vec4.ONE
-     * @description A constant vector set to [1, 1, 1, 1].
-     */
-    Object.defineProperty(Vec4, 'ONE', {
-        get: (function () {
-            var one = new Vec4(1, 1, 1, 1);
-            return function () {
-                return one;
-            };
-        }())
-    });
-
-    /**
-     * @field
-     * @static
-     * @readonly
-     * @type pc.Vec4
-     * @name pc.Vec4.ZERO
-     * @description A constant vector set to [0, 0, 0, 0].
-     */
-    Object.defineProperty(Vec4, 'ZERO', {
-        get: (function () {
-            var zero = new Vec4(0, 0, 0, 0);
-            return function () {
-                return zero;
-            };
-        }())
-    });
-
-    return {
-        Vec4: Vec4
-    };
-}()));
+/**
+ * @field
+ * @static
+ * @readonly
+ * @type pc.Vec4
+ * @name pc.Vec4.ZERO
+ * @description A constant vector set to [0, 0, 0, 0].
+ */
+Object.defineProperty(pc.Vec4, 'ZERO', {
+	get: (function () {
+		var zero = new pc.Vec4(0, 0, 0, 0);
+		return function () {
+			return zero;
+		};
+	}())
+});
