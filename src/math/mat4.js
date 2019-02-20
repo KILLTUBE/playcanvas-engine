@@ -1,38 +1,81 @@
-mat4_constructor        = instance.exports["Mat4#constructor"];
+init_mat4 = function() {
+    mat4_constructor        = instance.exports["Mat4#constructor"];
 
-mat4_add                = instance.exports["Mat4#add"];
-mat4_add2               = instance.exports["Mat4#add2"];
-mat4_clone              = instance.exports["Mat4#clone"];
-mat4_copy               = instance.exports["Mat4#copy"];
-mat4_equals             = instance.exports["Mat4#equals"];
-mat4_getScale           = instance.exports["Mat4#getScale"];
-mat4_getTranslation     = instance.exports["Mat4#getTranslation"];
-mat4_getX               = instance.exports["Mat4#getX"];
-mat4_getY               = instance.exports["Mat4#getY"];
-mat4_getZ               = instance.exports["Mat4#getZ"];
-mat4_invert             = instance.exports["Mat4#invert"];
-mat4_invertTo3x3        = instance.exports["Mat4#invertTo3x3"];
-mat4_isIdentity         = instance.exports["Mat4#isIdentity"];
-mat4_mul                = instance.exports["Mat4#mul"];
-mat4_mul2               = instance.exports["Mat4#mul2"];
-mat4_setFromAxisAngle   = instance.exports["Mat4#setFromAxisAngle"];
-mat4_setFromEulerAngles = instance.exports["Mat4#setFromEulerAngles"];
-mat4_setFrustum         = instance.exports["Mat4#setFrustum"];
-mat4_setIdentity        = instance.exports["Mat4#setIdentity"];
-mat4_setLookAt          = instance.exports["Mat4#setLookAt"];
-mat4_setOrtho           = instance.exports["Mat4#setOrtho"];
-mat4_setPerspective     = instance.exports["Mat4#setPerspective"];
-mat4_setScale           = instance.exports["Mat4#setScale"];
-mat4_setTRS             = instance.exports["Mat4#setTRS"];
-mat4_setTranslate       = instance.exports["Mat4#setTranslate"];
-mat4_transformPoint     = instance.exports["Mat4#transformPoint"];
-mat4_transformVec4      = instance.exports["Mat4#transformVec4"];
-mat4_transformVector    = instance.exports["Mat4#transformVector"];
-mat4_transpose          = instance.exports["Mat4#transpose"];
+    mat4_add                = instance.exports["Mat4#add"];
+    mat4_add2               = instance.exports["Mat4#add2"];
+    mat4_clone              = instance.exports["Mat4#clone"];
+    mat4_copy               = instance.exports["Mat4#copy"];
+    mat4_equals             = instance.exports["Mat4#equals"];
+    mat4_getScale           = instance.exports["Mat4#getScale"];
+    mat4_getTranslation     = instance.exports["Mat4#getTranslation"];
+    mat4_getX               = instance.exports["Mat4#getX"];
+    mat4_getY               = instance.exports["Mat4#getY"];
+    mat4_getZ               = instance.exports["Mat4#getZ"];
+    mat4_invert             = instance.exports["Mat4#invert"];
+    mat4_invertTo3x3        = instance.exports["Mat4#invertTo3x3"];
+    mat4_isIdentity         = instance.exports["Mat4#isIdentity"];
+    mat4_mul                = instance.exports["Mat4#mul"];
+    mat4_mul2               = instance.exports["Mat4#mul2"];
+    mat4_setFromAxisAngle   = instance.exports["Mat4#setFromAxisAngle"];
+    mat4_setFromEulerAngles = instance.exports["Mat4#setFromEulerAngles"];
+    mat4_setFrustum         = instance.exports["Mat4#setFrustum"];
+    mat4_setIdentity        = instance.exports["Mat4#setIdentity"];
+    mat4_setLookAt          = instance.exports["Mat4#setLookAt"];
+    mat4_setOrtho           = instance.exports["Mat4#setOrtho"];
+    mat4_setPerspective     = instance.exports["Mat4#setPerspective"];
+    mat4_setScale           = instance.exports["Mat4#setScale"];
+    mat4_setTRS             = instance.exports["Mat4#setTRS"];
+    mat4_setTranslate       = instance.exports["Mat4#setTranslate"];
+    mat4_transformPoint     = instance.exports["Mat4#transformPoint"];
+    mat4_transformVec4      = instance.exports["Mat4#transformVec4"];
+    mat4_transformVector    = instance.exports["Mat4#transformVector"];
+    mat4_transpose          = instance.exports["Mat4#transpose"];
+
+    Object.defineProperty(pc.Mat4, 'IDENTITY', {
+        get: (function () {
+            var identity = new pc.Mat4();
+            return function () {
+                return identity;
+            };
+        }())
+    });
+    
+    Object.defineProperty(pc.Mat4, 'ONE', {
+        get: (function () {
+            var zero = new pc.Mat4().set([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]);
+            return function () {
+                return zero;
+            };
+        }())
+    });
+    
+    Object.defineProperty(pc.Mat4, 'ZERO', {
+        get: (function () {
+            var zero = new pc.Mat4().set([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+            return function () {
+                return zero;
+            };
+        }())
+    });
+
+    // fix up all null pointers
+    for (var tmp of nullpointers_mat4) {
+        tmp.ptr = mat4_constructor(0);
+        tmp.setupWrapper();
+    }
+}
+
+nullpointers_mat4 = [];
 
 pc.Mat4 = function() {
-	this.ptr = mat4_constructor(0);
-	this.setupWrapper();
+    if (typeof mat4_constructor === "undefined") {
+        console.log("pc.Mat4", arguments);
+        this.ptr = 0;
+        nullpointers_mat4.push(this);
+    } else {
+	    this.ptr = mat4_constructor(0);
+        this.setupWrapper();
+    }
 }
 
 pc.Mat4.wrap = function(ptr) {
@@ -134,6 +177,11 @@ pc.Mat4.prototype.mul = function(rhs) {
 }
 
 pc.Mat4.prototype.mul2 = function(lhs, rhs) {
+
+    if (this.ptr === 0) {
+	    this.ptr = mat4_constructor(0);
+        this.setupWrapper();
+    }
 	mat4_mul2(this.ptr, lhs.ptr, rhs.ptr);
 	return this;
 }
@@ -259,30 +307,3 @@ pc.Mat4.prototype.toStringFixed = function(n) {
 	t += ']';
 	return t;
 }
-
-Object.defineProperty(pc.Mat4, 'IDENTITY', {
-	get: (function () {
-		var identity = new pc.Mat4();
-		return function () {
-			return identity;
-		};
-	}())
-});
-
-Object.defineProperty(pc.Mat4, 'ONE', {
-	get: (function () {
-		var zero = new pc.Mat4().set([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]);
-		return function () {
-			return zero;
-		};
-	}())
-});
-
-Object.defineProperty(pc.Mat4, 'ZERO', {
-	get: (function () {
-		var zero = new pc.Mat4().set([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
-		return function () {
-			return zero;
-		};
-	}())
-});

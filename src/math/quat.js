@@ -1,33 +1,66 @@
-quat_constructor        = instance.exports["Quat#constructor"];
+init_quat = function() {
+	quat_constructor        = instance.exports["Quat#constructor"];
 
-quat_clone              = instance.exports["Quat#clone"];
-quat_conjugate          = instance.exports["Quat#conjugate"];
-quat_copy               = instance.exports["Quat#copy"];
-quat_equals             = instance.exports["Quat#equals"];
-quat_getAxisAngle       = instance.exports["Quat#getAxisAngle"];
-quat_getEulerAngles     = instance.exports["Quat#getEulerAngles"];
-quat_invert             = instance.exports["Quat#invert"];
-quat_length             = instance.exports["Quat#length"];
-quat_lengthSq           = instance.exports["Quat#lengthSq"];
-quat_mul                = instance.exports["Quat#mul"];
-quat_mul2               = instance.exports["Quat#mul2"];
-quat_normalize          = instance.exports["Quat#normalize"];
-quat_set                = instance.exports["Quat#set"];
-quat_setFromAxisAngle   = instance.exports["Quat#setFromAxisAngle"];
-quat_setFromEulerAngles = instance.exports["Quat#setFromEulerAngles"];
-quat_setFromMat4        = instance.exports["Quat#setFromMat4"];
-quat_slerp              = instance.exports["Quat#slerp"];
-quat_transformVector    = instance.exports["Quat#transformVector"];
+	quat_clone              = instance.exports["Quat#clone"];
+	quat_conjugate          = instance.exports["Quat#conjugate"];
+	quat_copy               = instance.exports["Quat#copy"];
+	quat_equals             = instance.exports["Quat#equals"];
+	quat_getAxisAngle       = instance.exports["Quat#getAxisAngle"];
+	quat_getEulerAngles     = instance.exports["Quat#getEulerAngles"];
+	quat_invert             = instance.exports["Quat#invert"];
+	quat_length             = instance.exports["Quat#length"];
+	quat_lengthSq           = instance.exports["Quat#lengthSq"];
+	quat_mul                = instance.exports["Quat#mul"];
+	quat_mul2               = instance.exports["Quat#mul2"];
+	quat_normalize          = instance.exports["Quat#normalize"];
+	quat_set                = instance.exports["Quat#set"];
+	quat_setFromAxisAngle   = instance.exports["Quat#setFromAxisAngle"];
+	quat_setFromEulerAngles = instance.exports["Quat#setFromEulerAngles"];
+	quat_setFromMat4        = instance.exports["Quat#setFromMat4"];
+	quat_slerp              = instance.exports["Quat#slerp"];
+	quat_transformVector    = instance.exports["Quat#transformVector"];
+
+	Object.defineProperty(pc.Quat, 'IDENTITY', {
+		get: (function () {
+			var identity = new pc.Quat();
+			return function () {
+				return identity;
+			};
+		}())
+	});
+	
+	Object.defineProperty(pc.Quat, 'ZERO', {
+		get: (function () {
+			var zero = new pc.Quat(0, 0, 0, 0);
+			return function () {
+				return zero;
+			};
+		}())
+	});
+
+	// fix up all null pointers
+	for (var tmp of nullpointers_quat) {
+		tmp.ptr = quat_constructor(0, 0,0,0,1);
+	}
+}
 
 /**
  * @constructor
  */
 
+nullpointers_quat = [];
+
 pc.Quat = function(x, y, z, w) {
-	if (x && x.length === 4) {
-		this.ptr = quat_constructor(0, x[0], x[1], x[2], x[3]);
-	} else {
-		this.ptr = quat_constructor(0, x || 0, y || 0, z || 0, w || 1);
+	if (typeof quat_constructor === "undefined") {
+		console.log("pc.Quat", arguments);
+		this.ptr = 0;
+		nullpointers_quat.push(this);
+    } else {
+		if (x && x.length === 4) {
+			this.ptr = quat_constructor(0, x[0], x[1], x[2], x[3]);
+		} else {
+			this.ptr = quat_constructor(0, x || 0, y || 0, z || 0, w || 1);
+		}
 	}
 }
 
@@ -173,22 +206,4 @@ Object.defineProperty(pc.Quat.prototype, 'w', {
 	set: function(newValue) {
 		module.F32[(this.ptr >> 2) + 3] = newValue;
 	}
-});
-
-Object.defineProperty(pc.Quat, 'IDENTITY', {
-	get: (function () {
-		var identity = new pc.Quat();
-		return function () {
-			return identity;
-		};
-	}())
-});
-
-Object.defineProperty(pc.Quat, 'ZERO', {
-	get: (function () {
-		var zero = new pc.Quat(0, 0, 0, 0);
-		return function () {
-			return zero;
-		};
-	}())
 });

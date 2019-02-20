@@ -1,33 +1,78 @@
-vec4_add          = instance.exports["Vec4#add"];
-vec4_add2         = instance.exports["Vec4#add2"];
-vec4_clone        = instance.exports["Vec4#clone"];
-vec4_constructor  = instance.exports["Vec4#constructor"];
-vec4_copy         = instance.exports["Vec4#copy"];
-//vec4_cross        = instance.exports["Vec4#cross"];
-vec4_dot          = instance.exports["Vec4#dot"];
-vec4_equals       = instance.exports["Vec4#equals"];
-vec4_length       = instance.exports["Vec4#length"];
-vec4_lengthSq     = instance.exports["Vec4#lengthSq"];
-vec4_lerp         = instance.exports["Vec4#lerp"];
-vec4_mul          = instance.exports["Vec4#mul"];
-vec4_mul2         = instance.exports["Vec4#mul2"];
-vec4_normalize    = instance.exports["Vec4#normalize"];
-//vec4_project      = instance.exports["Vec4#project"];
-vec4_scale        = instance.exports["Vec4#scale"];
-vec4_set          = instance.exports["Vec4#set"];
-vec4_sub          = instance.exports["Vec4#sub"];
-vec4_sub2         = instance.exports["Vec4#sub2"];
 
-/**
- * @constructor
- */
+init_vec4 = function() {
+    vec4_constructor  = instance.exports["Vec4#constructor"];
+
+    vec4_add          = instance.exports["Vec4#add"];
+    vec4_add2         = instance.exports["Vec4#add2"];
+    vec4_clone        = instance.exports["Vec4#clone"];
+    vec4_copy         = instance.exports["Vec4#copy"];
+    vec4_dot          = instance.exports["Vec4#dot"];
+    vec4_equals       = instance.exports["Vec4#equals"];
+    vec4_length       = instance.exports["Vec4#length"];
+    vec4_lengthSq     = instance.exports["Vec4#lengthSq"];
+    vec4_lerp         = instance.exports["Vec4#lerp"];
+    vec4_mul          = instance.exports["Vec4#mul"];
+    vec4_mul2         = instance.exports["Vec4#mul2"];
+    vec4_normalize    = instance.exports["Vec4#normalize"];
+    vec4_scale        = instance.exports["Vec4#scale"];
+    vec4_set          = instance.exports["Vec4#set"];
+    vec4_sub          = instance.exports["Vec4#sub"];
+    vec4_sub2         = instance.exports["Vec4#sub2"];
+
+    /**
+     * @field
+     * @static
+     * @readonly
+     * @type pc.Vec4
+     * @name pc.Vec4.ONE
+     * @description A constant vector set to [1, 1, 1, 1].
+     */
+    Object.defineProperty(pc.Vec4, 'ONE', {
+        get: (function () {
+            var one = new pc.Vec4(1, 1, 1, 1);
+            return function () {
+                return one;
+            };
+        }())
+    });
+
+    /**
+     * @field
+     * @static
+     * @readonly
+     * @type pc.Vec4
+     * @name pc.Vec4.ZERO
+     * @description A constant vector set to [0, 0, 0, 0].
+     */
+    Object.defineProperty(pc.Vec4, 'ZERO', {
+        get: (function () {
+            var zero = new pc.Vec4(0, 0, 0, 0);
+            return function () {
+                return zero;
+            };
+        }())
+    });
+
+    // fix up all null pointers
+    for (var tmp of nullpointers_vec4) {
+        tmp.ptr = vec4_constructor(0, 0,0,0,0);
+    }
+}
+
+nullpointers_vec4 = [];
 
 pc.Vec4 = function(x, y, z, w) {
-	if (x && x.length === 4) {
-		this.ptr = vec4_constructor(0, x[0], x[1], x[2], x[3]);
-	} else {
-		this.ptr = vec4_constructor(0, x || 0, y || 0, z || 0, w || 0);
-	}
+    if (typeof vec4_constructor === "undefined") {
+        console.log("pc.Vec4", arguments);
+        this.ptr = 0;
+        nullpointers_vec4.push(this);
+    } else {
+        if (x && x.length === 4) {
+            this.ptr = vec4_constructor(0, x[0], x[1], x[2], x[3]);
+        } else {
+            this.ptr = vec4_constructor(0, x || 0, y || 0, z || 0, w || 0);
+        }
+    }
 }
 
 pc.Vec4.wrap = function(ptr) {
@@ -154,39 +199,4 @@ Object.defineProperty(pc.Vec4.prototype, 'w', {
 	set: function(newValue) {
 		module.F32[(this.ptr >> 2) + 3] = newValue;
 	}
-});
-
-
-/**
- * @field
- * @static
- * @readonly
- * @type pc.Vec4
- * @name pc.Vec4.ONE
- * @description A constant vector set to [1, 1, 1, 1].
- */
-Object.defineProperty(pc.Vec4, 'ONE', {
-	get: (function () {
-		var one = new pc.Vec4(1, 1, 1, 1);
-		return function () {
-			return one;
-		};
-	}())
-});
-
-/**
- * @field
- * @static
- * @readonly
- * @type pc.Vec4
- * @name pc.Vec4.ZERO
- * @description A constant vector set to [0, 0, 0, 0].
- */
-Object.defineProperty(pc.Vec4, 'ZERO', {
-	get: (function () {
-		var zero = new pc.Vec4(0, 0, 0, 0);
-		return function () {
-			return zero;
-		};
-	}())
 });

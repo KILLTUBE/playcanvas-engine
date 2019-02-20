@@ -1,28 +1,98 @@
-vec2_constructor  = instance.exports["Vec2#constructor"];
 
-vec2_add          = instance.exports["Vec2#add"];
-vec2_add2         = instance.exports["Vec2#add2"];
-vec2_clone        = instance.exports["Vec2#clone"];
-vec2_copy         = instance.exports["Vec2#copy"];
-vec2_dot          = instance.exports["Vec2#dot"];
-vec2_equals       = instance.exports["Vec2#equals"];
-vec2_length       = instance.exports["Vec2#length"];
-vec2_lengthSq     = instance.exports["Vec2#lengthSq"];
-vec2_lerp         = instance.exports["Vec2#lerp"];
-vec2_mul          = instance.exports["Vec2#mul"];
-vec2_mul2         = instance.exports["Vec2#mul2"];
-vec2_normalize    = instance.exports["Vec2#normalize"];
-vec2_scale        = instance.exports["Vec2#scale"];
-vec2_set          = instance.exports["Vec2#set"];
-vec2_sub          = instance.exports["Vec2#sub"];
-vec2_sub2         = instance.exports["Vec2#sub2"];
+init_vec2 = function() {
+    vec2_constructor  = instance.exports["Vec2#constructor"];
+
+    vec2_add          = instance.exports["Vec2#add"];
+    vec2_add2         = instance.exports["Vec2#add2"];
+    vec2_clone        = instance.exports["Vec2#clone"];
+    vec2_copy         = instance.exports["Vec2#copy"];
+    vec2_dot          = instance.exports["Vec2#dot"];
+    vec2_equals       = instance.exports["Vec2#equals"];
+    vec2_length       = instance.exports["Vec2#length"];
+    vec2_lengthSq     = instance.exports["Vec2#lengthSq"];
+    vec2_lerp         = instance.exports["Vec2#lerp"];
+    vec2_mul          = instance.exports["Vec2#mul"];
+    vec2_mul2         = instance.exports["Vec2#mul2"];
+    vec2_normalize    = instance.exports["Vec2#normalize"];
+    vec2_scale        = instance.exports["Vec2#scale"];
+    vec2_set          = instance.exports["Vec2#set"];
+    vec2_sub          = instance.exports["Vec2#sub"];
+    vec2_sub2         = instance.exports["Vec2#sub2"];
+
+    Object.defineProperty(pc.Vec2, 'ONE', {
+        get: (function () {
+            var tmp = new pc.Vec2(1, 1);
+            return function () {
+                return tmp;
+            };
+        }())
+    });
+    
+    Object.defineProperty(pc.Vec2, 'LEFT', {
+        get: (function () {
+            var tmp = new pc.Vec2(-1, 0);
+            return function () {
+                return tmp;
+            };
+        }())
+    });
+    
+    Object.defineProperty(pc.Vec2, 'RIGHT', {
+        get: (function () {
+            var tmp = new pc.Vec2(1, 0);
+            return function () {
+                return tmp;
+            };
+        }())
+    });
+    
+    Object.defineProperty(pc.Vec2, 'UP', {
+        get: (function () {
+            var tmp = new pc.Vec2(0, 1);
+            return function () {
+                return tmp;
+            };
+        }())
+    });
+    
+    Object.defineProperty(pc.Vec2, 'DOWN', {
+        get: (function () {
+            var tmp = new pc.Vec2(0, -1);
+            return function () {
+                return tmp;
+            };
+        }())
+    });
+    
+    Object.defineProperty(pc.Vec2, 'ZERO', {
+        get: (function () {
+            var tmp = new pc.Vec2(0, 0);
+            return function () {
+                return tmp;
+            };
+        }())
+    });
+
+    // fix up all null pointers
+    for (var tmp of nullpointers_vec2) {
+        tmp.ptr = vec2_constructor(0, 0,0);
+    }
+}
+
+nullpointers_vec2 = [];
 
 pc.Vec2 = function(x, y) {
-	if (x && x.length === 2) {
-		this.ptr = vec2_constructor(0, x[0], x[1]);
-	} else {
-		this.ptr = vec2_constructor(0, x || 0, y || 0);
-	}
+    if (typeof vec2_constructor === "undefined") {
+        console.log("pc.Vec2", arguments);
+        this.ptr = 0;
+        nullpointers_vec2.push(this);
+    } else {
+        if (x && x.length === 2) {
+            this.ptr = vec2_constructor(0, x[0], x[1]);
+        } else {
+            this.ptr = vec2_constructor(0, x || 0, y || 0);
+        }
+    }
 }
 
 pc.Vec2.wrap = function(ptr) {
@@ -131,58 +201,4 @@ Object.defineProperty(pc.Vec2.prototype, 'y', {
 	set: function(newValue) {
 		module.F32[(this.ptr >> 2) + 1] = newValue;
 	}
-});
-
-Object.defineProperty(pc.Vec2, 'ONE', {
-	get: (function () {
-		var tmp = new pc.Vec2(1, 1);
-		return function () {
-			return tmp;
-		};
-	}())
-});
-
-Object.defineProperty(pc.Vec2, 'LEFT', {
-	get: (function () {
-		var tmp = new pc.Vec2(-1, 0);
-		return function () {
-			return tmp;
-		};
-	}())
-});
-
-Object.defineProperty(pc.Vec2, 'RIGHT', {
-	get: (function () {
-		var tmp = new pc.Vec2(1, 0);
-		return function () {
-			return tmp;
-		};
-	}())
-});
-
-Object.defineProperty(pc.Vec2, 'UP', {
-	get: (function () {
-		var tmp = new pc.Vec2(0, 1);
-		return function () {
-			return tmp;
-		};
-	}())
-});
-
-Object.defineProperty(pc.Vec2, 'DOWN', {
-	get: (function () {
-		var tmp = new pc.Vec2(0, -1);
-		return function () {
-			return tmp;
-		};
-	}())
-});
-
-Object.defineProperty(pc.Vec2, 'ZERO', {
-	get: (function () {
-		var tmp = new pc.Vec2(0, 0);
-		return function () {
-			return tmp;
-		};
-	}())
 });

@@ -1,19 +1,53 @@
-mat3_constructor  = instance.exports["Mat3#constructor"];
+init_mat3 = function() {
+    mat3_constructor  = instance.exports["Mat3#constructor"];
 
-mat3_add          = instance.exports["Mat3#add"];
-mat3_add2         = instance.exports["Mat3#add2"];
-mat3_clone        = instance.exports["Mat3#clone"];
-mat3_copy         = instance.exports["Mat3#copy"];
-mat3_equals       = instance.exports["Mat3#equals"];
-mat3_isIdentity   = instance.exports["Mat3#isIdentity"];
-mat3_setIdentity  = instance.exports["Mat3#setIdentity"];
-mat3_transpose    = instance.exports["Mat3#transpose"];
-mat3_mul2         = instance.exports["Mat3#mul2"];
-mat3_mul          = instance.exports["Mat3#mul"];
+    mat3_add          = instance.exports["Mat3#add"];
+    mat3_add2         = instance.exports["Mat3#add2"];
+    mat3_clone        = instance.exports["Mat3#clone"];
+    mat3_copy         = instance.exports["Mat3#copy"];
+    mat3_equals       = instance.exports["Mat3#equals"];
+    mat3_isIdentity   = instance.exports["Mat3#isIdentity"];
+    mat3_setIdentity  = instance.exports["Mat3#setIdentity"];
+    mat3_transpose    = instance.exports["Mat3#transpose"];
+    mat3_mul2         = instance.exports["Mat3#mul2"];
+    mat3_mul          = instance.exports["Mat3#mul"];
+
+    Object.defineProperty(pc.Mat3, 'IDENTITY', {
+        get: function () {
+            var identity = new pc.Mat3();
+            return function () {
+                return identity;
+            };
+        }()
+    });
+    
+    Object.defineProperty(pc.Mat3, 'ZERO', {
+        get: function () {
+            var zero = new pc.Mat3().set([0, 0, 0, 0, 0, 0, 0, 0, 0]);
+            return function () {
+                return zero;
+            };
+        }()
+    });
+
+    // fix up all null pointers
+    for (var tmp of nullpointers_mat3) {
+        tmp.ptr = mat3_constructor(0);
+        tmp.setupWrapper();
+    }
+}
+
+nullpointers_mat3 = [];
 
 pc.Mat3 = function() {
-	this.ptr = mat3_constructor(0);
-	this.setupWrapper();
+    if (typeof mat3_constructor === "undefined") {
+        console.log("pc.Mat3", arguments);
+        this.ptr = 0;
+        nullpointers_mat3.push(this);
+    } else {
+        this.ptr = mat3_constructor(0);
+        this.setupWrapper();
+    }
 }
 
 pc.Mat3.wrap = function(ptr) {
@@ -104,21 +138,3 @@ pc.Mat3.prototype.toStringFixed = function(n) {
 	t += ']';
 	return t;
 }
-
-Object.defineProperty(pc.Mat3, 'IDENTITY', {
-	get: function () {
-		var identity = new pc.Mat3();
-		return function () {
-			return identity;
-		};
-	}()
-});
-
-Object.defineProperty(pc.Mat3, 'ZERO', {
-	get: function () {
-		var zero = new pc.Mat3().set([0, 0, 0, 0, 0, 0, 0, 0, 0]);
-		return function () {
-			return zero;
-		};
-	}()
-});
