@@ -62,17 +62,17 @@ init_vec4 = function() {
 nullpointers_vec4 = [];
 
 pc.Vec4 = function(x, y, z, w) {
-    if (typeof vec4_constructor === "undefined") {
-        console.log("pc.Vec4", arguments);
-        this.ptr = 0;
-        nullpointers_vec4.push(this);
-    } else {
+    //if (typeof vec4_constructor === "undefined") {
+    //    console.log("pc.Vec4", arguments);
+    //    this.ptr = 0;
+    //    nullpointers_vec4.push(this);
+    //} else {
         if (x && x.length === 4) {
             this.ptr = vec4_constructor(0, x[0], x[1], x[2], x[3]);
         } else {
             this.ptr = vec4_constructor(0, x || 0, y || 0, z || 0, w || 0);
         }
-    }
+    //}
 }
 
 pc.Vec4.wrap = function(ptr) {

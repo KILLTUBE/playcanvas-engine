@@ -153,9 +153,14 @@ init_vec3 = function() {
     });
 
     // fix up all null pointers
+    /*
     for (var tmp of nullpointers_vec3) {
-        tmp.ptr = vec3_constructor(0, 0,0,0);
+		var x = tmp.setLater.x;
+		var y = tmp.setLater.y;
+		var z = tmp.setLater.z;
+        tmp.ptr = vec3_constructor(0, x, y, z);
     }
+    */
 }
 
 /**
@@ -165,17 +170,18 @@ init_vec3 = function() {
 nullpointers_vec3 = [];
 
 pc.Vec3 = function(x, y, z) {
-    if (typeof vec3_constructor === "undefined") {
-        console.log("pc.Vec3", arguments);
-        this.ptr = 0;
-        nullpointers_vec3.push(this);
-    } else {
+    //if (typeof vec3_constructor === "undefined") {
+    //    console.log("pc.Vec3", arguments);
+    //    this.ptr = 0;
+	//	this.setLater = {x: x || 0, y: y || 0, z: z || 0};
+    //    nullpointers_vec3.push(this);
+    //} else {
         if (x && x.length === 3) {
             this.ptr = vec3_constructor(0, x[0], x[1], x[2]);
         } else {
             this.ptr = vec3_constructor(0, x || 0, y || 0, z || 0);
         }
-    }
+    //}
 }
 
 pc.Vec3.wrap = function(ptr) {

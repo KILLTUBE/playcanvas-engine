@@ -31,23 +31,25 @@ init_mat3 = function() {
     });
 
     // fix up all null pointers
+    /*
     for (var tmp of nullpointers_mat3) {
         tmp.ptr = mat3_constructor(0);
         tmp.setupWrapper();
     }
+    */
 }
 
 nullpointers_mat3 = [];
 
 pc.Mat3 = function() {
-    if (typeof mat3_constructor === "undefined") {
-        console.log("pc.Mat3", arguments);
-        this.ptr = 0;
-        nullpointers_mat3.push(this);
-    } else {
+    //if (typeof mat3_constructor === "undefined") {
+    //    console.log("pc.Mat3", arguments);
+    //    this.ptr = 0;
+    //    nullpointers_mat3.push(this);
+    //} else {
         this.ptr = mat3_constructor(0);
         this.setupWrapper();
-    }
+    //}
 }
 
 pc.Mat3.wrap = function(ptr) {

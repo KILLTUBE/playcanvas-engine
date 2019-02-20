@@ -59,23 +59,29 @@ init_mat4 = function() {
     });
 
     // fix up all null pointers
+    /*
     for (var tmp of nullpointers_mat4) {
         tmp.ptr = mat4_constructor(0);
         tmp.setupWrapper();
+        if (typeof tmp.setLater !== "undefined") {
+            console.log("Mat4: setLater: ", tmp.setLater);
+            tmp.set(tmp.setLater);
+        }
     }
+    */
 }
 
 nullpointers_mat4 = [];
 
 pc.Mat4 = function() {
-    if (typeof mat4_constructor === "undefined") {
-        console.log("pc.Mat4", arguments);
-        this.ptr = 0;
-        nullpointers_mat4.push(this);
-    } else {
+    //if (typeof mat4_constructor === "undefined") {
+    //    console.log("pc.Mat4", arguments);
+    //    this.ptr = 0;
+    //    nullpointers_mat4.push(this);
+    //} else {
 	    this.ptr = mat4_constructor(0);
         this.setupWrapper();
-    }
+    //}
 }
 
 pc.Mat4.wrap = function(ptr) {
@@ -266,6 +272,14 @@ pc.Mat4.prototype.transpose = function() {
 }
 
 pc.Mat4.prototype.set = function(src) {
+    /*
+    if (this.ptr === 0) {
+        this.setLater = src;
+        //this.data = new Float32Array(src);
+        this.data = new Float32Array(16);
+        return this;
+    }
+    */
 	var dst = this.data;
 	dst[0] = src[0];
 	dst[1] = src[1];

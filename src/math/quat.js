@@ -39,9 +39,15 @@ init_quat = function() {
 	});
 
 	// fix up all null pointers
+	/*
 	for (var tmp of nullpointers_quat) {
-		tmp.ptr = quat_constructor(0, 0,0,0,1);
+		var x = tmp.setLater.x;
+		var y = tmp.setLater.y;
+		var z = tmp.setLater.z;
+		var w = tmp.setLater.w;
+		tmp.ptr = quat_constructor(0, x, y, z, w);
 	}
+	*/
 }
 
 /**
@@ -51,17 +57,18 @@ init_quat = function() {
 nullpointers_quat = [];
 
 pc.Quat = function(x, y, z, w) {
-	if (typeof quat_constructor === "undefined") {
-		console.log("pc.Quat", arguments);
-		this.ptr = 0;
-		nullpointers_quat.push(this);
-    } else {
+	//if (typeof quat_constructor === "undefined") {
+	//	console.log("pc.Quat", arguments);
+	//	this.ptr = 0;
+	//	this.setLater = {x: x || 0, y: y || 0, z: z || 0, w: w || 1};
+	//	nullpointers_quat.push(this);
+    //} else {
 		if (x && x.length === 4) {
 			this.ptr = quat_constructor(0, x[0], x[1], x[2], x[3]);
 		} else {
 			this.ptr = quat_constructor(0, x || 0, y || 0, z || 0, w || 1);
 		}
-	}
+	//}
 }
 
 pc.Quat.wrap = function(ptr) {

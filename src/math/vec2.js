@@ -74,25 +74,30 @@ init_vec2 = function() {
     });
 
     // fix up all null pointers
+    /*
     for (var tmp of nullpointers_vec2) {
-        tmp.ptr = vec2_constructor(0, 0,0);
+		var x = tmp.setLater.x;
+		var y = tmp.setLater.y;
+        tmp.ptr = vec2_constructor(0, x, y);
     }
+    */
 }
 
 nullpointers_vec2 = [];
 
 pc.Vec2 = function(x, y) {
-    if (typeof vec2_constructor === "undefined") {
-        console.log("pc.Vec2", arguments);
-        this.ptr = 0;
-        nullpointers_vec2.push(this);
-    } else {
+    //if (typeof vec2_constructor === "undefined") {
+    //    console.log("pc.Vec2", arguments);
+    //    this.ptr = 0;
+	//	this.setLater = {x: x || 0, y: y || 0};
+    //    nullpointers_vec2.push(this);
+    //} else {
         if (x && x.length === 2) {
             this.ptr = vec2_constructor(0, x[0], x[1]);
         } else {
             this.ptr = vec2_constructor(0, x || 0, y || 0);
         }
-    }
+    //}
 }
 
 pc.Vec2.wrap = function(ptr) {
