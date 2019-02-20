@@ -1,10 +1,13 @@
 Object.assign(pc, function () {
 
     // Global shadowmap resources
+    
     var scaleShift = new pc.Mat4().mul2(
         new pc.Mat4().setTranslate(0.5, 0.5, 0.5),
         new pc.Mat4().setScale(0.5, 0.5, 0.5)
     );
+    
+    //var scaleShift = new pc.Mat4().set([0.5, 0, 0, 0, 0, 0.5, 0, 0, 0, 0, 0.5, 0, 0.5, 0.5, 0.5, 1]);
 
     var opChanId = { r: 1, g: 2, b: 3, a: 4 };
 
@@ -16,7 +19,21 @@ Object.assign(pc, function () {
         new pc.Quat().setFromEulerAngles(0, 180, 180),
         new pc.Quat().setFromEulerAngles(0, 0, 180)
     ];
+    window.pointLightRotations = pointLightRotations;
 
+  
+    /*
+    // this works, values from original JS math
+    var pointLightRotations = [
+        new pc.Quat(-0.7071067811865475, 4.329780281177466e-17, 0.7071067811865476, 4.329780281177467e-17),
+        new pc.Quat(0.7071067811865475, -4.329780281177466e-17, 0.7071067811865476, 4.329780281177467e-17),
+        new pc.Quat(0.7071067811865475, 0, 0, 0.7071067811865476),
+        new pc.Quat(-0.7071067811865475, 0, 0, 0.7071067811865476),
+        new pc.Quat(-1, 6.123233995736766e-17, 6.123233995736766e-17, 3.749399456654644e-33),
+        new pc.Quat(0, 0, 1, 6.123233995736766e-17)
+    ];
+    */
+    
     var numShadowModes = 5;
     var shadowMapCache = [{}, {}, {}, {}, {}]; // must be a size of numShadowModes
 
