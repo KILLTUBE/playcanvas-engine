@@ -20,12 +20,6 @@
 ../src/core/platform.js
 ../src/core/indexed-list.js
 ../src/math/math.js
-../src/math/vec2.js
-../src/math/vec3.js
-../src/math/vec4.js
-../src/math/mat3.js
-../src/math/mat4.js
-../src/math/quat.js
 ../src/math/curve.js
 ../src/math/curve-set.js
 ../src/shape/bounding-box.js

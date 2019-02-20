@@ -216,7 +216,8 @@ var run = function () {
             var options = {
               js: files,
               compilation_level: compilerLevel,
-              language_in: "ECMASCRIPT5",
+              language_in: "ECMASCRIPT_NEXT",
+              language_out: "ECMASCRIPT_NEXT",
               js_output_file: outputPath,
               output_wrapper_file: "./umd-wrapper.js",
               manage_closure_dependencies: true,
@@ -228,7 +229,8 @@ var run = function () {
                   "suspiciousCode" // temp: remove this again
               ],
               externs: "externs.js",
-              warning_level: "VERBOSE"
+              warning_level: "VERBOSE",
+			  rewrite_polyfills: false
             };
 
             if (compilerLevel === "WHITESPACE_ONLY") {
